@@ -1,0 +1,20 @@
+C:\Users\kyoku\Documents\Work\VSProj\Photon30\EZServer\EZProtocol\bin\Debug\EZProtocol.dll
+C:\Users\kyoku\Documents\Work\VSProj\Photon30\EZServer\EZProtocol\bin\Debug\EZProtocol.pdb
+C:\Users\kyoku\Documents\Work\VSProj\Photon30\EZServer\EZProtocol\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\kyoku\Documents\Work\VSProj\Photon30\EZServer\EZProtocol\obj\Debug\EZProtocol.dll
+C:\Users\kyoku\Documents\Work\VSProj\Photon30\EZServer\EZProtocol\obj\Debug\EZProtocol.pdb
+D:\Photon\Space\demo\EZServer\EZProtocol\bin\Debug\EZProtocol.dll
+D:\Photon\Space\demo\EZServer\EZProtocol\bin\Debug\EZProtocol.pdb
+D:\Photon\Space\demo\EZServer\EZProtocol\obj\Debug\EZProtocol.csprojResolveAssemblyReference.cache
+D:\Photon\Space\demo\EZServer\EZProtocol\obj\Debug\EZProtocol.dll
+D:\Photon\Space\demo\EZServer\EZProtocol\obj\Debug\EZProtocol.pdb
+C:\Users\ChengMeng\Documents\Visual Studio 2013\Projects\EZServer\EZProtocol\bin\Debug\EZProtocol.dll
+C:\Users\ChengMeng\Documents\Visual Studio 2013\Projects\EZServer\EZProtocol\bin\Debug\EZProtocol.pdb
+C:\Users\ChengMeng\Documents\Visual Studio 2013\Projects\EZServer\EZProtocol\obj\Debug\EZProtocol.csprojResolveAssemblyReference.cache
+C:\Users\ChengMeng\Documents\Visual Studio 2013\Projects\EZServer\EZProtocol\obj\Debug\EZProtocol.dll
+C:\Users\ChengMeng\Documents\Visual Studio 2013\Projects\EZServer\EZProtocol\obj\Debug\EZProtocol.pdb
+D:\PCServer\EZServer\EZProtocol\bin\Debug\EZProtocol.dll
+D:\PCServer\EZServer\EZProtocol\bin\Debug\EZProtocol.pdb
+D:\PCServer\EZServer\EZProtocol\obj\Debug\EZProtocol.csprojResolveAssemblyReference.cache
+D:\PCServer\EZServer\EZProtocol\obj\Debug\EZProtocol.dll
+D:\PCServer\EZServer\EZProtocol\obj\Debug\EZProtocol.pdb

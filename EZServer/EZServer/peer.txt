@@ -1,0 +1,430 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Photon.SocketServer;
+using PhotonHostRuntimeInterfaces;
+using ExitGames.Logging;
+
+using ExitGames.Concurrency.Fibers;
+
+using EZProtocol;
+
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace EZServer
+{
+    
+    public class EZServerPeer : PeerBase
+    {
+       private readonly IFiber fiber;
+       public static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+
+        public Guid peerGuid {get; protected set;}
+        private EZServerApplication _server;
+
+        private Dictionary<string, Account> users = new Dictionary<string, Account>();
+        #region
+        public EZServerPeer(IRpcProtocol rpcProtocol, IPhotonPeer nativePeer, EZServerApplication ServerApplication)
+            : base(rpcProtocol, nativePeer)
+        {
+
+            //Log.Debug("start");
+            //DBSQLManager.instance.LoadDB();
+            for (int i = 0; i < 15; i++ )
+            {
+                Account a = new Account();
+                a.uniqueId = 10000 + i;
+                a.pw = "123";
+                a.sex = 1;
+                a.id = "a" + i.ToString();
+                a.nickName = "Player" + i.ToString();
+                users.Add(a.id, a);
+            }*/
+
+            peerGuid = Guid.NewGuid ();
+            _server = ServerApplication;
+            this.fiber = new PoolFiber ();
+            this.fiber.Start ();
+            _server.Actors.AddConnectedPeer(peerGuid, this);
+        }
+        #endregion
+
+        protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail)
+        {
+            if (Log.IsDebugEnabled)
+            {
+                Log.Debug("Client has Diconnected");
+            }
+            // 失去連線時要處理的事項，例如釋放資源
+
+            Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+            if (actor != null)
+            {
+                if (actor.roomIndex != -1)
+                {
+                    // 呼叫Application廣播給聊天室所有玩家將此玩家移除
+                    _server.BroadcastRoomActorQuit(actor.roomIndex, actor);
+
+                    // 從房間移除
+                    _server.Rooms.RoomList[actor.roomIndex].Quit(actor.uniqueID);
+                }
+                else
+                {
+                    // 從大廳移除
+                    _server.lobbyActors.Remove(actor.uniqueID);
+                }
+            }
+
+
+            _server.Actors.ActorOffline(peerGuid);
+        }
+
+        protected override void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters)
+        {
+            #region Photon Debug
+            if (Log.IsDebugEnabled)
+            {
+                Log.Debug("OnOperationRequest get key :");
+                foreach (KeyValuePair<byte, object> item in operationRequest.Parameters)
+                {
+                    Log.DebugFormat(string.Format("{0} : {1}", item.Key, item.Value.ToString()));
+                }
+            }
+            #endregion
+
+            switch (operationRequest.OperationCode)
+            {
+                case (byte)OperationCode.Login:
+                {
+                    if (operationRequest.Parameters.Count < 2) //??????????2
+                    {
+                        //??????????
+                        OperationResponse response = new
+                        OperationResponse(operationRequest.OperationCode) { ReturnCode = (short)ErrorCode.InvalidParameter,
+                        DebugMessage = "Login Fail" };
+                       // SendOperationResponse(response, new SendParameters());
+                        this.fiber.Enqueue(()=> SendOperationResponse (response, new SendParameters ()));
+                    }
+                    else
+                    {
+                        var memberID = (string)operationRequest.Parameters[((byte)LoginParameterCode.MemberID)];
+                        var memberPW = (string)operationRequest.Parameters[(byte)LoginParameterCode.MemberPW];
+                       // if (memberID == "chenmeng" && memberPW == "123321")
+                        if (users.ContainsKey(memberID) && users[memberID].pw == memberPW)
+                        {
+                            Account a = users[memberID] ;
+                            string MemberUniqueID =a.uniqueId;
+                            //string Nickname = a.nickName;
+                            //short Sex = (short)a.sex;
+                            ActorCollection.ActorReturn actorRet =
+                                _server.Actors.ActorOnline(peerGuid, MemberUniqueID, memberID, Nickname, Sex);
+                            
+                            if (actorRet.ReturnCode == 1)
+                            {
+                                if (actorRet.ReturnCode == 1)
+                                {
+                                    /*var parameter = new Dictionary<byte, object> { 
+                                              { (byte)LoginResponseCode.Ret, actorRet.ReturnCode }, {(byte)LoginResponseCode.MemberID, memberID}, {(byte)LoginResponseCode.MemberPW, memberPW}, {(byte)LoginResponseCode.Nickname, Nickname}, {(byte)LoginResponseCode.MemberUniqueID, MemberUniqueID}, {(byte)LoginResponseCode.Sex, Sex}
+                                           };*/
+                                    Dictionary<byte, object> parameter = new Dictionary<byte, object>();
+                                    Bundle bundle = new Bundle();
+                                    bundle.account = new Account();
+                                    bundle.roomMember = new RoomMember();
+                                    bundle.account.id = memberID;
+                                    bundle.account.pw = memberPW;
+                                    bundle.account.nickName = Nickname;
+                                    bundle.account.uniqueId = MemberUniqueID;
+
+                                    bundle.roomMember.posX = 100;
+                                    bundle.roomMember.posY = 100;
+                                    bundle.roomMember.direct = -1;
+                                    bundle.roomMember.act = 0;
+
+                                    String json = JsonConvert.SerializeObject(bundle);
+
+                                    parameter.Add(operationRequest.OperationCode, json);
+
+                                    /*parameter.Add((byte)LoginResponseCode.Ret, actorRet.ReturnCode);
+                                    parameter.Add((byte)LoginResponseCode.MemberID, memberID);
+                                    parameter.Add((byte)LoginResponseCode.MemberPW, memberPW);
+                                    parameter.Add((byte)LoginResponseCode.Nickname, Nickname);
+                                    parameter.Add((byte)LoginResponseCode.MemberUniqueID, MemberUniqueID);
+                                    parameter.Add((byte)LoginResponseCode.Sex, Sex);
+
+                                    parameter.Add((byte)LoginResponseCode.PosX, 100);
+                                    parameter.Add((byte)LoginResponseCode.PosY, 100);
+                                    parameter.Add((byte)LoginResponseCode.Direct, -1);
+                                    parameter.Add((byte)LoginResponseCode.ActionNum, 0);*/
+                                    OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = (short)ErrorCode.Ok, DebugMessage = "" };
+
+                                    SendOperationResponse(response, new SendParameters());
+
+                                    // 登入後預設是加入大廳
+                                    _server.lobbyActors.Add(MemberUniqueID);
+                                }
+                                else
+                                {
+                                    // 返回自訂錯誤，若有發生錯誤則將暱稱等資料填空白以免Client以為有成功
+                                    var parameter = new Dictionary<byte, object> { 
+                                              { (byte)LoginResponseCode.Ret, actorRet.ReturnCode }, {(byte)LoginResponseCode.MemberID, memberID}, {(byte)LoginResponseCode.MemberPW, memberPW}, {(byte)LoginResponseCode.Nickname, ""}, {(byte)LoginResponseCode.MemberUniqueID, 0}, {(byte)LoginResponseCode.Sex, -1}
+                                           };
+                                    OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = (short)ErrorCode.CustomError, DebugMessage = actorRet.DebugMessage };
+                                    //SendOperationResponse(response, new SendParameters());
+                                    this.fiber.Enqueue(() => SendOperationResponse(response, new SendParameters()));
+                                }
+                            }
+                            /*int Ret = 1;
+                            var parameter = new Dictionary<byte, object> {
+                            { (byte)LoginResponseCode.Ret, Ret }, {(byte)LoginResponseCode.MemberID, memberID}, {(byte)LoginResponseCode.MemberPW,
+                            memberPW},
+                            {(byte)LoginResponseCode.Nickname, "chenmeng"} // 80??????????, 3??????
+                            };
+                            OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter ) { ReturnCode = (short)ErrorCode.Ok, DebugMessage = "" };
+                           // SendOperationResponse(response, new SendParameters());
+                            this.fiber.Enqueue(()=> SendOperationResponse(response, new SendParameters()));*/
+                        }
+                        else
+                        {
+                            OperationResponse response = new OperationResponse(operationRequest.OperationCode) { ReturnCode = (short)ErrorCode.InvalidOperation,
+                            DebugMessage = "Wrong id or password" };
+                            //SendOperationResponse(response, new SendParameters());
+                            this.fiber.Enqueue(()=>SendOperationResponse (response, new SendParameters ()));
+                        }
+                    }
+                    break;
+                }
+                #region Register
+                case (byte)OperationCode.Register:
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.account = new Account ();
+                    bundle.account.uniqueId = users.Count + 10000;
+                    bundle.account.id = (string)operationRequest.Parameters[(byte)LoginParameterCode.MemberID];
+                    bundle.account.pw = (string)operationRequest.Parameters[(byte)LoginParameterCode.MemberPW];
+                    Dictionary<byte, object> val = new Dictionary<byte, object>();
+                    val.Add(operationRequest.OperationCode, JsonConvert.SerializeObject(bundle));
+                   //TODO: IS EXIT SAME NAME
+                    //string content = account.id, account.pw, account.nickName, account.sex, account.userId
+                    //string content = string.Format("{0},{1},{2},{3},{4};", account.id, account.pw, account.nickName, account.sex, account.uniqueId);
+
+                    users.Add(bundle.account.id, bundle.account);
+                    OperationResponse response = new OperationResponse(operationRequest.OperationCode, val) { ReturnCode = (short)ErrorCode.Ok,
+                    DebugMessage = "1" };
+                    //SendOperationResponse(response, new SendParameters());
+                    this.fiber.Enqueue(()=>SendOperationResponse (response, new SendParameters ()));
+
+                    break;
+                }
+                #endregion
+                #region Get Info
+                case (byte)OperationCode.GetRoomInfo:
+                {
+                    var roomIndex = (Int32)operationRequest.Parameters[(byte)GetRoomInfoParameterCode.RoomIndex];
+                    RoomCollection.RoomInfo rInfo = _server.Rooms.GetRoomInfo(roomIndex);
+
+                    if (rInfo != null)
+                    {
+                        var parameter = new Dictionary<byte, object> { 
+                                              { (byte)GetRoomInfoResponseCode.RoomIndex, rInfo.RoomIndex }, {(byte)GetRoomInfoResponseCode.RoomName, rInfo.RoomName}, {(byte)GetRoomInfoResponseCode.Limit, rInfo.Limit}, {(byte)GetRoomInfoResponseCode.ActorCount, rInfo.ActorCount}
+                                           };
+
+                        OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = (short)ErrorCode.Ok, DebugMessage = "" };
+
+                        SendOperationResponse(response, new SendParameters());
+                    }
+                    else
+                    {
+                        OperationResponse response = new OperationResponse(operationRequest.OperationCode) { ReturnCode = (short)ErrorCode.InvalidOperation, DebugMessage = "無此房間" };
+
+                        SendOperationResponse(response, new SendParameters());
+                    }
+                    break;
+                }
+                #endregion
+
+                #region GetAllRoomInfo
+                case (byte)OperationCode.GetAllRoomInfo:
+                {
+                    RoomCollection.RoomInfo[] rInfos = _server.Rooms.GetAllRoomInfo();
+
+                    var parameter = new Dictionary<byte, object>();
+
+                    for (int i = 0; i < rInfos.Length; i++)
+                    {
+                        var roomparameter = new Dictionary<byte, object> { 
+                                              { (byte)GetRoomInfoResponseCode.RoomIndex, rInfos[i].RoomIndex }, {(byte)GetRoomInfoResponseCode.RoomName, rInfos[i].RoomName}, {(byte)GetRoomInfoResponseCode.Limit, rInfos[i].Limit}, {(byte)GetRoomInfoResponseCode.ActorCount, rInfos[i].ActorCount}
+                                           };
+
+                        parameter.Add((byte)i, roomparameter);
+
+                    }
+
+                    OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = (short)ErrorCode.Ok, DebugMessage = "" };
+
+                    SendOperationResponse(response, new SendParameters());
+
+                    break;
+                }
+                #endregion
+
+                #region JoinRoom
+                case (byte)OperationCode.JoinRoom:
+                {
+                    var roomIndex = (Int32)operationRequest.Parameters[(byte)GetRoomInfoParameterCode.RoomIndex];
+                    RoomCollection.RoomInfo rInfo = _server.Rooms.GetRoomInfo(roomIndex);
+                    if (rInfo != null)
+                    {
+                        // 取得會員資料
+                        Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+                        // 加人房間
+                        if (_server.Rooms.RoomList[roomIndex].Join(this.peerGuid, actor.uniqueID, actor.memberID, actor.nickname, actor.sex))
+                        {
+
+                            // 更改會員狀態
+                            _server.Actors.SetActorStatus(actor.uniqueID, 2, (short)roomIndex);
+
+                            // 回傳房間資訊 
+                            var parameter = new Dictionary<byte, object> { 
+                                              { (byte)JoinRoomResponseCode.RoomIndex, rInfo.RoomIndex }, {(byte)JoinRoomResponseCode.RoomName, rInfo.RoomName}, {(byte)JoinRoomResponseCode.Limit, rInfo.Limit}, {(byte)JoinRoomResponseCode.ActorCount, rInfo.ActorCount + 1}
+                                           };
+
+                            OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = (short)ErrorCode.Ok, DebugMessage = "Join success" };
+
+                            SendOperationResponse(response, new SendParameters());
+
+                            _server.BroadcastJoinRoom((short)roomIndex, actor);
+                            // 從大廳移除(加入房間)
+                            _server.lobbyActors.Remove(actor.uniqueID);
+                        }
+                        else
+                        {
+                            OperationResponse response = new OperationResponse(operationRequest.OperationCode) { ReturnCode = (short)ErrorCode.CustomError, DebugMessage = "重複加入或房間已滿" };
+
+                            SendOperationResponse(response, new SendParameters());
+                        }
+                    }
+                    else
+                    {
+                        OperationResponse response = new OperationResponse(operationRequest.OperationCode) { ReturnCode = (short)ErrorCode.InvalidOperation, DebugMessage = "無此房間" };
+
+                        SendOperationResponse(response, new SendParameters());
+                    }
+
+                    break;
+                }
+                #endregion
+
+                #region QuitRoom
+                case (byte)OperationCode.QuitRoom:
+                {
+                    Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+                    if (actor != null)
+                    {
+                        if (actor.roomIndex != -1)
+                        {
+                            // 呼叫Application廣播給聊天室所有玩家將此玩家移除
+                            _server.BroadcastRoomActorQuit(actor.roomIndex, actor);
+
+                            // 從房間移除
+                            _server.Rooms.RoomList[actor.roomIndex].Quit(actor.uniqueID);
+                        }
+
+                        // 重設會員狀態
+                        _server.Actors.SetActorStatus(actor.uniqueID, 1, -1); // status=1 表示回大廳中, roomindex=-1表示不在任何房間中
+
+                        // 重新加入大廳
+                        _server.lobbyActors.Add(actor.uniqueID);
+                    }
+                    break;
+                }
+                #endregion
+
+                #region RoomActorBorning
+                case (byte)OperationCode.RoomActorBorning:
+                {
+                    try
+                    {
+                        // 取得會員的行為資訊
+                        float PosX = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosX];
+                        float PosY = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosY];
+                        float PosZ = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosZ];
+                        short Direct = (short)operationRequest.Parameters[(byte)RoomActorActionInfo.Direct];
+                        short ActionNum = (short)operationRequest.Parameters[(byte)RoomActorActionInfo.ActionNum];
+
+                        // 取得會員資訊
+                        Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+                        if (actor.roomIndex != -1)
+                        {
+                            // 更新玩家狀態到Room裡面的玩家列表
+                            _server.Rooms.RoomList[actor.roomIndex].UpdateActorAction(actor.uniqueID, PosX, PosY, PosZ, Direct, ActionNum);
+
+                            // 呼叫Application將已在聊天室所有玩家廣播給此玩家
+                            _server.BroadcastRoomActorAllToOne(actor.roomIndex, actor.uniqueID);
+
+                            // 呼叫Application將此玩家的行為廣播給聊天室所有玩家
+                            _server.BroadcastRoomActorOneToAll(actor.roomIndex, actor.uniqueID, actor.nickname, PosX, PosY, PosZ, Direct, ActionNum);
+                        }
+                    }
+                    catch (Exception EX)
+                    {
+                        Log.Error("Exception : " + EX.Message);
+                    }
+                    break;
+                }
+                #endregion
+
+                #region RoomActorActionUpdate
+                case (byte)OperationCode.RoomActorActionUpdate:
+                {
+                    // 取得會員的行為資訊
+                    float PosX = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosX];
+                    float PosY = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosY];
+                    float PosZ = (float)operationRequest.Parameters[(byte)RoomActorActionInfo.PosZ];
+                    short Direct = (short)operationRequest.Parameters[(byte)RoomActorActionInfo.Direct];
+                    short ActionNum = (short)operationRequest.Parameters[(byte)RoomActorActionInfo.ActionNum];
+
+                    // 取得會員資訊
+                    Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+                    if (actor.roomIndex != -1)
+                    {
+                        // 更新玩家狀態到Room裡面的玩家列表
+                        _server.Rooms.RoomList[actor.roomIndex].UpdateActorAction(actor.uniqueID, PosX, PosY, PosZ, Direct, ActionNum);
+
+                        // 呼叫Application將此玩家的行為廣播給聊天室所有玩家
+                        _server.BroadcastRoomActorOneToAll(actor.roomIndex, actor.uniqueID, actor.nickname, PosX, PosY, PosZ, Direct, ActionNum);
+                    }
+
+                    break;
+                }
+                #endregion
+
+                #region Speak
+                case (byte)OperationCode.RoomSpeak:
+                {
+                    String TalkString = (string)operationRequest.Parameters[(byte)RoomActorSpeak.TalkString];
+
+                    // 取得會員資訊
+                    Actor actor = _server.Actors.GetActorFromGuid(this.peerGuid);
+
+                    // 將發言內容廣播給聊天室所有玩家
+                    if (actor.roomIndex != -1)
+                    {
+                        _server.BroadcastRoomSpeak(actor.roomIndex, actor.nickname, TalkString);
+                    }
+                    break;
+                }
+                #endregion
+            }
+        }
+    }
+}
