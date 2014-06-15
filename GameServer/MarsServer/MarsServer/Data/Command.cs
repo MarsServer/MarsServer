@@ -4,5 +4,7 @@
     Login,
     Register,
     ServerList,
-    LoginSuccess,
+
+    LinkServer,
+    ServerSelect,
 }

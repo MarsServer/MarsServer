@@ -8,7 +8,7 @@ namespace MarsServer
 {
     public class SQLConstants
     {
-        public const string MySQL_CONNECTION = "server=localhost;user id=root;Password='';database=MarsServer;persist security info=False";
+        public const string MySQL_CONNECTION = "server=localhost;user id=root;Password='';database=gameserver;persist security info=False";
 
         /*Accout*/
         public const string MySQL_INSERTINTO_ACCOUNT = "insert into account(uniqueid,id,pw,creatTime)";

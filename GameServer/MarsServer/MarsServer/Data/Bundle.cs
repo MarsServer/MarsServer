@@ -20,6 +20,9 @@ public class Bundle
 	[DefaultValue (null)]
 	public Account account;
 
+    [DefaultValue(null)]
+    public Server server;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

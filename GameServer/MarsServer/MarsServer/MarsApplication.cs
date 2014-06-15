@@ -18,7 +18,7 @@ namespace MarsServer
         protected override void Setup()
         {
             Debug.instance.Setup(this);
-            Debug.Log("Login Server Running.....");
+            Debug.Log("Mars Server Running.....");
         }
 
         protected override void TearDown()

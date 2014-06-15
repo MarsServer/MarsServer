@@ -3,6 +3,8 @@ using System.ComponentModel;
 
 public class Server
 {
+    [DefaultValue(0L)]
+    public long accountId;
     [DefaultValue(0)]
     public int serverId;
     [DefaultValue(null)]
