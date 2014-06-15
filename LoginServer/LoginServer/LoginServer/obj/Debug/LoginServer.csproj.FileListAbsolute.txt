@@ -19,3 +19,9 @@ D:\PCServer\Photon\Photon\deploy\LoginServer\bin\LoginServer.pdb
 D:\Photon\Photon\deploy\LoginServer\bin\LoginServer.dll
 D:\Photon\Photon\deploy\LoginServer\bin\LoginServer.pdb
 D:\Photon\Photon\deploy\LoginServer\bin\log4net.config
+D:\Unity_Space\Photon\Photon\deploy\LoginServer\bin\log4net.config
+D:\Unity_Space\Photon\Photon\deploy\LoginServer\bin\LoginServer.dll
+D:\Unity_Space\Photon\Photon\deploy\LoginServer\bin\LoginServer.pdb
+D:\Unity_Space\MarsServer\LoginServer\LoginServer\LoginServer\obj\Debug\LoginServer.csprojResolveAssemblyReference.cache
+D:\Unity_Space\MarsServer\LoginServer\LoginServer\LoginServer\obj\Debug\LoginServer.dll
+D:\Unity_Space\MarsServer\LoginServer\LoginServer\LoginServer\obj\Debug\LoginServer.pdb
