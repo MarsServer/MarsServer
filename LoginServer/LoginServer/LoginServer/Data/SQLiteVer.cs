@@ -12,6 +12,7 @@ namespace LoginServer
         public const string SQLITE_PATH_URL = "ftp://qq459127484:kanni789@002.3vftp.com/MG.db";
         public int ver;
         public string url;
+        public string test;
 
     }
 }

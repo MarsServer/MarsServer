@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C87847F5-42E1-41E6-9A84-AA5BEE45F179}</ProjectGuid>
+    <ProjectGuid>{D3450011-A0B2-4F7B-BAA0-41BF81F25D24}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MarsServer</RootNamespace>
@@ -67,7 +67,7 @@
     <Compile Include="Data\Region.cs" />
     <Compile Include="Data\Server.cs" />
     <Compile Include="Data\SQLiteVer.cs" />
-    <Compile Include="Debug\Debug.cs" />
+    <Compile Include="DebugLog\Debug.cs" />
     <Compile Include="Json\JsonConvert.cs" />
     <Compile Include="MarsApplication.cs" />
     <Compile Include="MarsPeer.cs" />

@@ -23,6 +23,7 @@ namespace LoginServer
             bundle.sqliteVer = new SQLiteVer();
             bundle.sqliteVer.ver = SQLiteVer.SQLITE_VER;
             bundle.sqliteVer.url = SQLiteVer.SQLITE_PATH_URL;
+            bundle.sqliteVer.test = "test";
             string json = JsonConvert.SerializeObject(bundle);
             Dictionary<byte, object> parameter = new Dictionary<byte, object>();
             parameter.Add((byte)Command.Handshake, json);
