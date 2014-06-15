@@ -18,5 +18,9 @@ namespace MarsServer
         /*Server List*/
         public const string MySQL_SERVER_REGION_LIST = "select * from serverregion";
         public const string MySQL_SERVER_LIST = "select * from serverlist_{0}";
+
+        /*Role*/
+        public const string MySQL_INSERTINTO_ROLE = "insert into account(roleId,accountid,rolename,level)";
+        public const string MySQL_INSERTINTO_ROLE_VALUE = " values('{0}','{1}','{2}','{3}')";
     }
 }
