@@ -49,6 +49,10 @@ namespace MarsServer
                 bundle.cmd = Command.ServerSelect;
                 bundle.server = server;
             }
+            else if (command == (byte)Command.CreatRole)
+            {
+                Role role = JsonConvert.DeserializeObject<Role>(getJson);
+            }
             if (bundle != null)
             {
                 string json = JsonConvert.SerializeObject(bundle);
