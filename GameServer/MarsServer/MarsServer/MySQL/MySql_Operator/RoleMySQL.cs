@@ -46,5 +46,29 @@ namespace MarsServer
              }
              return dt.Rows[0][index].ToString();
          }
+
+         public List<Role> GetDataList (long value)
+         {
+             List<Role> list = new List<Role>();
+             StringBuilder sb_sql = new StringBuilder();
+             DataTable dt = null;
+             sb_sql.AppendFormat(SQLConstants.MySQL_CHECK_ACCOUNT_ID_ROLE, value.ToString());
+             dt = DBUtility.RunSQLReturnDataTable(sb_sql.ToString());
+             if (dt.Rows.Count == 0)
+             {
+                 return null;
+             }
+             for (int i = 0; i < dt.Rows.Count; i++)
+             {
+                 Role r = new Role();
+                 r.roleId = long.Parse (dt.Rows[i][0].ToString());
+                 r.accountId = long.Parse(dt.Rows[i][1].ToString());
+                 r.roleName = dt.Rows[i][2].ToString();
+                 r.profession = dt.Rows[i][3].ToString();
+                 r.level = int.Parse(dt.Rows[i][4].ToString());
+                 list.Add(r);
+             }
+             return list;
+         }
     }
 }

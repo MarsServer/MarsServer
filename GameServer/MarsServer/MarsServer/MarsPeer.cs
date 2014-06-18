@@ -48,6 +48,7 @@ namespace MarsServer
                 bundle = new Bundle ();
                 bundle.cmd = Command.ServerSelect;
                 bundle.server = server;
+                bundle.roles = RoleMySQL.instance.GetDataList(server.accountId);
             }
             else if (command == (byte)Command.CreatRole)
             {
