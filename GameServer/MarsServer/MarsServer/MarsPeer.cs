@@ -52,6 +52,20 @@ namespace MarsServer
             else if (command == (byte)Command.CreatRole)
             {
                 Role role = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle = new Bundle();
+                bundle.cmd = Command.CreatRole;
+                string message = RoleMySQL.instance.CreatRole(role);
+                long id = 0;
+                bool isSuccess = long.TryParse(message, out id);
+                if (isSuccess)
+                {
+                    bundle.error = null;
+                }
+                else
+                {
+                    bundle.error = new Error();
+                    bundle.error.message = NetError.ROLR_CREAT_ERROR;
+                }
             }
             if (bundle != null)
             {

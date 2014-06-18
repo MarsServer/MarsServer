@@ -10,7 +10,7 @@ namespace MarsServer
     {
         public const string SQL_ERROR = "SQL is not Exit";
 
-
+        /*Login Server*/
         public const string LOGIN_ERROR = "Login.Error";
         public const string LOGIN_USER_ERROR = "Login.Invaid.User";
         public const string LOGIN_PW_ERROR = "Login.Invaid.PW";
@@ -21,6 +21,9 @@ namespace MarsServer
 
         public const string INVAID_ERROR = "ID.Error";
         public const string LIMIT_ERROR = "Limit.Error";
+
+        /*Game Server*/
+        public const string ROLR_CREAT_ERROR= "game.role.same.name.error";
 
 
         public const string UNKNOW_ERROR = "Unknown.Error";

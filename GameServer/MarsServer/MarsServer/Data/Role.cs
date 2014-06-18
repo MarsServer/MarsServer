@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Role
 {
-	[DefaultValue (null)]
-	public string roleId;
+	[DefaultValue (0L)]
+	public long roleId;
 	[DefaultValue (0L)]
 	public long accountId;
 	[DefaultValue (null)]
