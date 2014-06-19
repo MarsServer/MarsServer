@@ -60,7 +60,8 @@ namespace MarsServer
                 bool isSuccess = long.TryParse(message, out id);
                 if (isSuccess)
                 {
-                    bundle.error = null;
+                    role.roleId = id;
+                    bundle.role = role;
                 }
                 else
                 {

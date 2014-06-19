@@ -26,6 +26,9 @@ public class Bundle
     [DefaultValue(null)]
     public List<Role> roles;
 
+    [DefaultValue(null)]
+    public Role role;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

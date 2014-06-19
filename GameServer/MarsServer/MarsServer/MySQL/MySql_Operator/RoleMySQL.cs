@@ -20,7 +20,7 @@ namespace MarsServer
              }
              StringBuilder insert_sql = new StringBuilder();
              insert_sql.Append(SQLConstants.MySQL_INSERTINTO_ROLE);
-             insert_sql.AppendFormat(SQLConstants.MySQL_INSERTINTO_ROLE_VALUE, r.roleId, r.accountId, r.roleName, r.profession, "1", DateTime.Now.ToString());
+             insert_sql.AppendFormat(SQLConstants.MySQL_INSERTINTO_ROLE_VALUE, r.roleId, r.accountId, r.roleName, r.sex, r.profession, "1", DateTime.Now.ToString());
              DBUtility.RunSQL(insert_sql.ToString());
              return GetQueryValue(SQLConstants.MySQL_CHECK_ROLE_NAME, r.roleName, "roleid");
          }
@@ -64,8 +64,9 @@ namespace MarsServer
                  r.roleId = long.Parse (dt.Rows[i][0].ToString());
                  r.accountId = long.Parse(dt.Rows[i][1].ToString());
                  r.roleName = dt.Rows[i][2].ToString();
-                 r.profession = dt.Rows[i][3].ToString();
-                 r.level = int.Parse(dt.Rows[i][4].ToString());
+                 r.sex = int.Parse(dt.Rows[i][3].ToString());
+                 r.profession = dt.Rows[i][4].ToString();
+                 r.level = int.Parse(dt.Rows[i][5].ToString());
                  list.Add(r);
              }
              return list;
