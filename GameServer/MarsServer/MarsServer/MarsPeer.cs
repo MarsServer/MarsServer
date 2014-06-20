@@ -113,8 +113,17 @@ namespace MarsServer
             {
                 Role role = JsonConvert.DeserializeObject<Role>(getJson);
                 this.role = role;
+                bundle = new Bundle();
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;
+            }
+            else if (command == (byte)Command.SendChat)
+            {
+                Message message = JsonConvert.DeserializeObject<Message>(getJson);
+                bundle.cmd = Command.SendChat;
+
+                //not send myself
+                return;
             }
             if (bundle != null)
             {

@@ -12,7 +12,7 @@
 
     EnterGame,
 
-
+    SendChat,
 
     NetError,
     AbortDiscount,
