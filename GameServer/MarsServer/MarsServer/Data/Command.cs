@@ -6,6 +6,19 @@
     ServerList,
 
     LinkServer,
-    ServerSelect,
+    ServerSelect,//linke server and get role list
 
-    CreatRole,}
+    CreatRole,
+
+    EnterGame,
+
+
+
+    NetError,
+    AbortDiscount,
+}
+
+public enum EventCommand
+{
+    
+}

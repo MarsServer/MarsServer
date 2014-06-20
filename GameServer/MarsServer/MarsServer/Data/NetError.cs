@@ -19,6 +19,10 @@ namespace MarsServer
         public const string REGISTER_USER_ERROR = "Register.User.Error";
         public const string REGISTER_NAME_ERROR = "Register.Name.Error";
 
+        //Enter Role error
+        public const string SAME_ACCOUNT_ERROR = "game.server.same";
+        public const string SAME_ACCOUNT_DISCOUNT_ERROR = "game.server.net.error";
+
         public const string INVAID_ERROR = "ID.Error";
         public const string LIMIT_ERROR = "Limit.Error";
 

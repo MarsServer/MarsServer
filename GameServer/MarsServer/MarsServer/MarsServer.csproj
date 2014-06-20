@@ -76,6 +76,7 @@
     <Compile Include="MySQL\DBUtility.cs" />
     <Compile Include="MySQL\MySql_Operator\RoleMySQL.cs" />
     <Compile Include="MySQL\SQLConstants.cs" />
+    <Compile Include="Players\PlayersManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringEncrypt\CSharpEncrypt.cs" />
   </ItemGroup>

@@ -11,35 +11,58 @@ namespace MarsServer
 {
     public class MarsPeer : PeerBase
     {
+        //public Guid peerGuid { get; protected set; }
+        public long accountId;
+        public Role role;
+
+
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
             : base(rpc, peer)
         {
+            initialization();
             LinkServerSuccess();
+        }
+
+        void initialization()
+        {
+            //peerGuid = Guid.NewGuid();
+            //PlayersManager.instance.AddUser(peerGuid, this);
         }
 
         private void LinkServerSuccess()
         {
             Bundle bundle = new Bundle();
             bundle.cmd = Command.LinkServer;
-            string json = JsonConvert.SerializeObject(bundle);
+            SendToClient(bundle);
+            /*string json = JsonConvert.SerializeObject(bundle);
             Dictionary<byte, object> parameter = new Dictionary<byte, object>();
             parameter.Add((byte)Command.LinkServer, json);
             OperationResponse response = new OperationResponse((byte)Command.LinkServer, parameter) { ReturnCode = 1, DebugMessage = "" };
 
-            SendOperationResponse(response, new SendParameters());
+            SendOperationResponse(response, new SendParameters());*/
+        }
+
+        public void StopLinked()
+        {
+            PlayersManager.instance.RemoveUser(accountId);
+            Debug.Log("Client has Diconnected" + accountId);
         }
 
         protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail)
         {
-            Debug.Log("Client has Diconnected");
+            StopLinked();
         }
 
         protected override void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters)
         {
             byte command = operationRequest.OperationCode;
-            string getJson = operationRequest.Parameters[command].ToString();
-            Debug.Log("<<<<<<<<<<<<<<<<<<<<<<<<<respone>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            Debug.Log( getJson );
+            string getJson = "";
+            if (operationRequest.Parameters != null && operationRequest.Parameters.Count > 0)
+            {
+                getJson = operationRequest.Parameters[command].ToString();
+                Debug.Log("<<<<<<<<<<<<<<<<<<<<<<<<<respone>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                Debug.Log(getJson);
+            }
             Bundle bundle = null;
             //Command
             if (command == (byte)Command.ServerSelect)
@@ -47,8 +70,21 @@ namespace MarsServer
                 Server server = JsonConvert.DeserializeObject<Server>(getJson);
                 bundle = new Bundle ();
                 bundle.cmd = Command.ServerSelect;
-                bundle.server = server;
-                bundle.roles = RoleMySQL.instance.GetDataList(server.accountId);
+
+                /**/
+                accountId = server.accountId;
+                string message = PlayersManager.instance.AddUser(accountId, this);
+
+                if (message == null)
+                {
+                    bundle.server = server;
+                    bundle.roles = RoleMySQL.instance.GetDataList(server.accountId);
+                }
+                else
+                {
+                    bundle.error = new Error();
+                    bundle.error.message = message;
+                }
             }
             else if (command == (byte)Command.CreatRole)
             {
@@ -69,15 +105,41 @@ namespace MarsServer
                     bundle.error.message = NetError.ROLR_CREAT_ERROR;
                 }
             }
+            else if (command == (byte) Command.AbortDiscount)
+            {
+                AbortConnection();
+            }
+            else if (command == (byte)Command.EnterGame)
+            {
+                Role role = JsonConvert.DeserializeObject<Role>(getJson);
+                this.role = role;
+                bundle.cmd = Command.EnterGame;
+                bundle.role = role;
+            }
             if (bundle != null)
             {
-                string json = JsonConvert.SerializeObject(bundle);
-                 Dictionary<byte, object> parameter = new Dictionary<byte, object>();
-                parameter.Add(operationRequest.OperationCode, json);
-                OperationResponse response = new OperationResponse(operationRequest.OperationCode, parameter) { ReturnCode = 1, DebugMessage = "" };
-
-                SendOperationResponse(response, new SendParameters());
+                SendToClient(bundle);
             }
         }
+
+        public void SendToClient(Bundle bundle)
+        {
+            string json = JsonConvert.SerializeObject(bundle);
+            Dictionary<byte, object> parameter = new Dictionary<byte, object>();
+            parameter.Add((byte)bundle.cmd, json);
+            OperationResponse response = new OperationResponse((byte)bundle.cmd, parameter) { ReturnCode = 1, DebugMessage = "" };
+
+            SendOperationResponse(response, new SendParameters());
+        }
+
+        /*void SendEventToClient(Bundle bundle)
+        {
+            string json = JsonConvert.SerializeObject(bundle);
+            Dictionary<byte, object> parameter = new Dictionary<byte, object>();
+            parameter.Add((byte)bundle.cmd, json);
+            OperationResponse response = new OperationResponse((byte)bundle.cmd, parameter) { ReturnCode = 1, DebugMessage = "" };
+
+            SendOperationResponse(response, new SendParameters());
+        }*/
     }
 }
