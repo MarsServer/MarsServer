@@ -55,6 +55,7 @@ namespace LoginServer
                     server.limit = int.Parse(dt.Rows[i][2].ToString());
                     server.ip = dt.Rows[i][3].ToString();
                     server.belong = dt.Rows[i][4].ToString();
+                    server.isSwitch = (int.Parse(dt.Rows[i][5].ToString()) == 1);
                     if (_servers.ContainsKey (r.regionName) == false)
                     {
 

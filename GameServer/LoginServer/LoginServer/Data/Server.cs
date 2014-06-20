@@ -13,6 +13,8 @@ public class Server
     public string ip;
     [DefaultValue(null)]
     public string belong;
+    [DefaultValue (false)]
+    public bool isSwitch;
 
     public Server() {   }
 }
