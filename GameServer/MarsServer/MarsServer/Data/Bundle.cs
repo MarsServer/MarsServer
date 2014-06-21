@@ -29,6 +29,9 @@ public class Bundle
     [DefaultValue(null)]
     public Role role;
 
+    [DefaultValue(null)]
+    public Message message;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

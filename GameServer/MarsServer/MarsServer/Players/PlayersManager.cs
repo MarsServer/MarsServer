@@ -8,6 +8,8 @@ namespace MarsServer
 {
     public class PlayersManager
     {
+        public delegate void BroadcastPlayerInfo(MarsPeer peer);
+
         public readonly static PlayersManager instance = new PlayersManager();
 
         private Dictionary<long, MarsPeer> users = new Dictionary<long, MarsPeer>();
@@ -35,6 +37,25 @@ namespace MarsServer
         public void RemoveUser(long accountId)
         {
             users.Remove(accountId);
+        }
+
+        public void BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
+        {
+            BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
+        }
+        public void BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
+        {
+            foreach (KeyValuePair<long, MarsPeer> kvp in users)
+            {
+                if (kvp.Key == accountId && isContain == false)
+                {
+                    continue;
+                }
+                if (broadcastPlayerInfo != null)
+                {
+                    broadcastPlayerInfo(kvp.Value);
+                }
+            }
         }
     }
 }

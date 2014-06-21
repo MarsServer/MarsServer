@@ -120,8 +120,13 @@ namespace MarsServer
             else if (command == (byte)Command.SendChat)
             {
                 Message message = JsonConvert.DeserializeObject<Message>(getJson);
+                bundle = new Bundle();
                 bundle.cmd = Command.SendChat;
-
+                bundle.message = message;
+                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                    {
+                        peer.SendToClient(bundle);
+                    });
                 //not send myself
                 return;
             }
