@@ -12,7 +12,7 @@ namespace MarsServer
     {
         public static string SerializeObject(object o)
         {
-            string json = JsonWriter.Serialize(o);
+            string json = JsonWriter.Serialize(o) + "/" + DateTime.Now.ToString() ;
             return CSharpEncrypt.Encrypt (json);
         }
 

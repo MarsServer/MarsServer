@@ -12,14 +12,27 @@ namespace MarsServer
 
         public readonly static PlayersManager instance = new PlayersManager();
 
-        private Dictionary<long, MarsPeer> users = new Dictionary<long, MarsPeer>();
+        private Dictionary<Guid, MarsPeer> users = new Dictionary<Guid, MarsPeer>();
 
-        public string AddUser(long accountId, MarsPeer marsPeer)
+        public int size { get { return users.Count; } }
+
+        public string AddUser(long accountId, Guid guidPeer, MarsPeer marsPeer)
         {
-            bool isLogined = users.ContainsKey(accountId);
+            bool isLogined = false;//users.ContainsKey(accountId);
+            MarsPeer _marsPeer = null;
+            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
+            {
+                if (kvp.Value.accountId == accountId)
+                {
+                    isLogined = true;
+                    _marsPeer = kvp.Value;
+                    break;
+                }
+            }
+            Debug.Log("<<<<<<<<<<<<<<<<<<<<<<<<<" + users.Count + ">>>>>>>>>>>>>>>>>>>>>>>>");
             if (isLogined == false)//not login
             {
-                users.Add(accountId, marsPeer);
+                users.Add(guidPeer, marsPeer);
             }
             else//has logined
             {
@@ -27,25 +40,25 @@ namespace MarsServer
                 bundle.cmd = Command.NetError;
                 bundle.error = new Error();
                 bundle.error.message = NetError.SAME_ACCOUNT_DISCOUNT_ERROR;
-                users[accountId].SendToClient(bundle);
-                users[accountId].StopLinked();
+                _marsPeer.SendToClient(bundle);
+                _marsPeer.StopLinked();
                 return NetError.SAME_ACCOUNT_ERROR;
             }
             return null;
         }
 
-        public void RemoveUser(long accountId)
+        public void RemoveUser(Guid accountId)
         {
             users.Remove(accountId);
         }
 
-        public void BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
+        public void BroastPlayerSomething(Guid accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
         {
             BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
         }
-        public void BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
+        public void BroastPlayerSomething(Guid accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
         {
-            foreach (KeyValuePair<long, MarsPeer> kvp in users)
+            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
             {
                 if (kvp.Key == accountId && isContain == false)
                 {

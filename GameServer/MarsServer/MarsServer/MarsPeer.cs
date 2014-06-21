@@ -11,7 +11,7 @@ namespace MarsServer
 {
     public class MarsPeer : PeerBase
     {
-        //public Guid peerGuid { get; protected set; }
+        public Guid peerGuid { get; protected set; }
         public long accountId;
         public Role role;
 
@@ -25,7 +25,7 @@ namespace MarsServer
 
         void initialization()
         {
-            //peerGuid = Guid.NewGuid();
+            peerGuid = Guid.NewGuid();
             //PlayersManager.instance.AddUser(peerGuid, this);
         }
 
@@ -44,13 +44,14 @@ namespace MarsServer
 
         public void StopLinked()
         {
-            PlayersManager.instance.RemoveUser(accountId);
-            Debug.Log("Client has Diconnected" + accountId);
+            PlayersManager.instance.RemoveUser(peerGuid);
+            Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
         }
 
         protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail)
         {
             StopLinked();
+         //   StopLinked();
         }
 
         protected override void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters)
@@ -73,7 +74,7 @@ namespace MarsServer
 
                 /**/
                 accountId = server.accountId;
-                string message = PlayersManager.instance.AddUser(accountId, this);
+                string message = PlayersManager.instance.AddUser(accountId, peerGuid, this);
 
                 if (message == null)
                 {
@@ -107,7 +108,8 @@ namespace MarsServer
             }
             else if (command == (byte) Command.AbortDiscount)
             {
-                AbortConnection();
+                StopLinked();
+                //AbortConnection();
             }
             else if (command == (byte)Command.EnterGame)
             {
@@ -123,7 +125,7 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.SendChat;
                 bundle.message = message;
-                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                PlayersManager.instance.BroastPlayerSomething(peerGuid, (MarsPeer peer) =>
                     {
                         peer.SendToClient(bundle);
                     });
