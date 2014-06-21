@@ -70,5 +70,22 @@ namespace MarsServer
                 }
             }
         }
+
+        public List<Role> GetAllListRole (Guid accountId)
+        {
+            List<Role> roles = new List<Role>();
+            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
+            {
+                if (kvp.Key == accountId) { continue; }
+                Role role = kvp.Value.role;
+                roles.Add(role);
+            }
+            return roles;
+        }
+
+        public void UpdateRoleInfo(Guid peerGuid, Role role)
+        {
+            users[peerGuid].role = role;
+        }
     }
 }

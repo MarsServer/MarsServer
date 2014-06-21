@@ -14,6 +14,11 @@
 
     SendChat,
 
+    InitAllPlayers,
+    AddNewPlayer,
+    UpdatePlayer,
+    DestroyPlayer,
+
     NetError,
     AbortDiscount,
 }

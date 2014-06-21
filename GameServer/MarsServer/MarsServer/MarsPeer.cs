@@ -118,6 +118,8 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;
+                bundle.onlineRoles = PlayersManager.instance.GetAllListRole(peerGuid);
+                
             }
             else if (command == (byte)Command.SendChat)
             {

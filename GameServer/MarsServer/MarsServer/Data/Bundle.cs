@@ -30,6 +30,9 @@ public class Bundle
     public Role role;
 
     [DefaultValue(null)]
+    public List<Role> onlineRoles;
+
+    [DefaultValue(null)]
     public Message message;
 
     public Bundle() {  }
