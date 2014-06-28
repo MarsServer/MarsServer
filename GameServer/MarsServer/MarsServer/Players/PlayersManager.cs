@@ -94,7 +94,10 @@ namespace MarsServer
             {
                 if (peer.accountId == accountId) continue;
                 Role r = peer.role;
-                roles.Add(r);
+                if (peer != null)
+                {
+                    roles.Add(r);
+                }
             }
             /*foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
             {

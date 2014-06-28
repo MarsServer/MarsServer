@@ -44,9 +44,22 @@ namespace MarsServer
 
         public void StopLinked()
         {
+            if (role != null)
+            {
+                Bundle bundle = new Bundle();
+                bundle.cmd = Command.DestroyPlayer;
+                bundle.role = role;
+                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                {
+                    if (role != null && role.region == 0)
+                    {
+                       peer.SendToClient(bundle);
+                    }
+                });
+            }
+
             PlayersManager.instance.RemoveUser(this);
             Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
-            //this = null;
             this.Dispose();
         }
 
@@ -120,6 +133,18 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;
+                bundle.role.region = 0;
+                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                {
+                    if (role != null && role.region == 0)
+                    {
+                        Bundle newbundle = new Bundle();
+                        newbundle.cmd = Command.AddNewPlayer;
+                        newbundle.role = role;
+                        newbundle.role.region = 0;
+                        peer.SendToClient(newbundle);
+                    }
+                });
                 bundle.onlineRoles = PlayersManager.instance.GetAllListRole(accountId);
                 
             }
@@ -134,6 +159,27 @@ namespace MarsServer
                         peer.SendToClient(bundle);
                     });
                 //not send myself
+                return;
+            }
+            else if (command == (byte)Command.UpdatePlayer)
+            {
+                Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                this.role.x = r.x;
+                this.role.z = r.z;
+                this.role.xRo = r.xRo;
+                this.role.zRo = r.zRo;
+                this.role.action = r.action;
+
+                bundle = new Bundle();
+                bundle.cmd = Command.UpdatePlayer;
+                bundle.role = r;
+                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                {
+                    if (role != null && role.region == 0)
+                    {
+                        peer.SendToClient(bundle);
+                    }
+                });
                 return;
             }
             if (bundle != null)
