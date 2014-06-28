@@ -44,8 +44,10 @@ namespace MarsServer
 
         public void StopLinked()
         {
-            PlayersManager.instance.RemoveUser(peerGuid);
+            PlayersManager.instance.RemoveUser(this);
             Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
+            //this = null;
+            this.Dispose();
         }
 
         protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail)
@@ -118,7 +120,7 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;
-                bundle.onlineRoles = PlayersManager.instance.GetAllListRole(peerGuid);
+                bundle.onlineRoles = PlayersManager.instance.GetAllListRole(accountId);
                 
             }
             else if (command == (byte)Command.SendChat)
@@ -127,7 +129,7 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.SendChat;
                 bundle.message = message;
-                PlayersManager.instance.BroastPlayerSomething(peerGuid, (MarsPeer peer) =>
+                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                     {
                         peer.SendToClient(bundle);
                     });

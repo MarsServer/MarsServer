@@ -16,12 +16,22 @@ public class Role
     [DefaultValue(0)]
     public int sex;//0-male, 1-female
 
+    [DefaultValue (0F)]
+    public float x;//xPos
     [DefaultValue(0F)]
-    public float x;
+    public float z;//yPos
     [DefaultValue(0F)]
-    public float z;
+    public float xRo;//xRotation
+    [DefaultValue(0F)]
+    public float zRo;//yRotation
+
     [DefaultValue(0)]
-    public float exp;
+    public int action;
+    [DefaultValue(0)]
+    public int region;//0-public, else is roomid;
+
+    [DefaultValue(0)]
+    public int exp;
 
 
 	[DefaultValue (0F)]

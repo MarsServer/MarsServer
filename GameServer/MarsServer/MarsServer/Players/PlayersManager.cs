@@ -13,6 +13,8 @@ namespace MarsServer
         public readonly static PlayersManager instance = new PlayersManager();
 
         private Dictionary<Guid, MarsPeer> users = new Dictionary<Guid, MarsPeer>();
+       // private Dictionary<long, MarsPeer> userIdDict = new Dictionary<long, MarsPeer>();
+        private List<MarsPeer> allusers = new List<MarsPeer>();
 
         public int size { get { return users.Count; } }
 
@@ -20,12 +22,13 @@ namespace MarsServer
         {
             bool isLogined = false;//users.ContainsKey(accountId);
             MarsPeer _marsPeer = null;
-            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
+            //isLogined = userIdDict.TryGetValue(accountId, out _marsPeer);
+            foreach (MarsPeer peer in allusers)
             {
-                if (kvp.Value.accountId == accountId)
+                if (peer.accountId == accountId)
                 {
                     isLogined = true;
-                    _marsPeer = kvp.Value;
+                    _marsPeer = peer;
                     break;
                 }
             }
@@ -33,6 +36,8 @@ namespace MarsServer
             if (isLogined == false)//not login
             {
                 users.Add(guidPeer, marsPeer);
+                //userIdDict.Add(accountId, marsPeer);
+                allusers.Add(marsPeer);
             }
             else//has logined
             {
@@ -47,18 +52,20 @@ namespace MarsServer
             return null;
         }
 
-        public void RemoveUser(Guid accountId)
+        public void RemoveUser(MarsPeer peer)
         {
-            users.Remove(accountId);
+            users.Remove(peer.peerGuid);
+            //userIdDict.Remove(peer.accountId);
+            allusers.Remove(peer);
         }
 
-        public void BroastPlayerSomething(Guid accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
+        public void BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
         {
             BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
         }
-        public void BroastPlayerSomething(Guid accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
+        public void BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
         {
-            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
+            /*foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
             {
                 if (kvp.Key == accountId && isContain == false)
                 {
@@ -68,18 +75,33 @@ namespace MarsServer
                 {
                     broadcastPlayerInfo(kvp.Value);
                 }
+            }*/
+            foreach (MarsPeer peer in allusers)
+            {
+                if (peer.accountId == accountId && isContain == false) continue;
+                if (broadcastPlayerInfo != null)
+                {
+                    broadcastPlayerInfo(peer);
+                }
             }
+            
         }
 
-        public List<Role> GetAllListRole (Guid accountId)
+        public List<Role> GetAllListRole (long accountId)
         {
             List<Role> roles = new List<Role>();
-            foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
+            foreach (MarsPeer peer in allusers)
+            {
+                if (peer.accountId == accountId) continue;
+                Role r = peer.role;
+                roles.Add(r);
+            }
+            /*foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
             {
                 if (kvp.Key == accountId) { continue; }
                 Role role = kvp.Value.role;
                 roles.Add(role);
-            }
+            }*/
             return roles;
         }
 
