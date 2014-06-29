@@ -18,6 +18,7 @@ namespace LoginServer
         protected override void Setup()
         {
             Debug.instance.Setup(this);
+            ServerController.instance.GetServerList();
             Debug.Log("Login Server Running.....");
         }
 

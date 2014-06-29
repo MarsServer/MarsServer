@@ -25,7 +25,7 @@ namespace LoginServer
             }
         }
 
-        private Dictionary<string, Server[]> GetServerList()
+        public Dictionary<string, Server[]> GetServerList()
         {
             Dictionary<string, Server[]> _servers = new Dictionary<string, Server[]>();
             List<Region> regions = getAllRegions ();
@@ -65,6 +65,8 @@ namespace LoginServer
                     _servers[r.regionName][i] = server;
                 }
             }
+            Debug.Log("*********Server Loading Done!!!!");
+            this._servers = _servers;
             return _servers;
         }
 
