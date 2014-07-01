@@ -46,6 +46,9 @@
     <Reference Include="Photon.SocketServer">
       <HintPath>..\..\lib\Photon.SocketServer.dll</HintPath>
     </Reference>
+    <Reference Include="Photon3DotNet">
+      <HintPath>..\..\lib\Photon3DotNet.dll</HintPath>
+    </Reference>
     <Reference Include="PhotonHostRuntimeInterfaces">
       <HintPath>..\..\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -71,6 +74,7 @@
     <Compile Include="Data\SQLiteVer.cs" />
     <Compile Include="DebugLog\Debug.cs" />
     <Compile Include="Json\JsonConvert.cs" />
+    <Compile Include="LoginServer\LoginServer.cs" />
     <Compile Include="MarsApplication.cs" />
     <Compile Include="MarsPeer.cs" />
     <Compile Include="Message\ServerSetup.cs" />
