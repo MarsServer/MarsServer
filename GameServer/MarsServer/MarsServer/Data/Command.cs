@@ -19,6 +19,8 @@
     UpdatePlayer,
     DestroyPlayer,
 
+    EnterFight,
+
     NetError,
     AbortDiscount,
 }

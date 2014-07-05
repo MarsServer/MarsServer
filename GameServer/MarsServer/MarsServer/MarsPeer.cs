@@ -71,17 +71,17 @@ namespace MarsServer
 
         protected override void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters)
         {
-            byte command = operationRequest.OperationCode;
+            byte cmd = operationRequest.OperationCode;
             string getJson = "";
             if (operationRequest.Parameters != null && operationRequest.Parameters.Count > 0)
             {
-                getJson = operationRequest.Parameters[command].ToString();
+                getJson = operationRequest.Parameters[cmd].ToString();
                 Debug.Log("<<<<<<<<<<<<<<<<<<<<<<<<<respone>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                 Debug.Log(getJson);
             }
             Bundle bundle = null;
             //Command
-            if (command == (byte)Command.ServerSelect)
+            if (cmd == (byte)Command.ServerSelect)
             {
                 Server server = JsonConvert.DeserializeObject<Server>(getJson);
                 bundle = new Bundle ();
@@ -102,7 +102,7 @@ namespace MarsServer
                     bundle.error.message = message;
                 }
             }
-            else if (command == (byte)Command.CreatRole)
+            else if (cmd == (byte)Command.CreatRole)
             {
                 Role role = JsonConvert.DeserializeObject<Role>(getJson);
                 bundle = new Bundle();
@@ -121,12 +121,12 @@ namespace MarsServer
                     bundle.error.message = NetError.ROLR_CREAT_ERROR;
                 }
             }
-            else if (command == (byte) Command.AbortDiscount)
+            else if (cmd == (byte) Command.AbortDiscount)
             {
                 StopLinked();
                 //AbortConnection();
             }
-            else if (command == (byte)Command.EnterGame)
+            else if (cmd == (byte)Command.EnterGame)
             {
                 Role role = JsonConvert.DeserializeObject<Role>(getJson);
                 this.role = role;
@@ -148,7 +148,7 @@ namespace MarsServer
                 bundle.onlineRoles = PlayersManager.instance.GetAllListRole(accountId);
                 
             }
-            else if (command == (byte)Command.SendChat)
+            else if (cmd == (byte)Command.SendChat)
             {
                 Message message = JsonConvert.DeserializeObject<Message>(getJson);
                 bundle = new Bundle();
@@ -161,7 +161,7 @@ namespace MarsServer
                 //not send myself
                 return;
             }
-            else if (command == (byte)Command.UpdatePlayer)
+            else if (cmd == (byte)Command.UpdatePlayer)
             {
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
                 this.role.x = r.x;
@@ -181,6 +181,10 @@ namespace MarsServer
                     }
                 });
                 return;
+            }
+            else if (cmd == (byte) Command.EnterFight)
+            { 
+                
             }
             if (bundle != null)
             {
