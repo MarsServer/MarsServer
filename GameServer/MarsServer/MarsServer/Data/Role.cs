@@ -33,6 +33,15 @@ public class Role
     [DefaultValue(0)]
     public int exp;
 
+    [DefaultValue(0)]
+    public int strength;
+    [DefaultValue(0)]
+    public int agility;
+    [DefaultValue(0)]
+    public int stamina;
+    [DefaultValue(0)]
+    public int wit;
+
 
 	[DefaultValue (0F)]
 	public float speed;

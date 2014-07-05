@@ -35,6 +35,9 @@ public class Bundle
     [DefaultValue(null)]
     public Message message;
 
+    [DefaultValue(null)]
+    public Fight fight;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]
