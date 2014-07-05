@@ -19,6 +19,9 @@ namespace MarsServer
         {
             Debug.instance.Setup(this);
             Debug.Log("Mars Server Running.....");
+
+            RoleMySQL.instance.Init();
+            Debug.Log("Role is Ok...............................................");
         }
 
         protected override void TearDown()

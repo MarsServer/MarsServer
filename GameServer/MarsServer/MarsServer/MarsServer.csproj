@@ -66,6 +66,7 @@
     <Compile Include="Data\Bundle.cs" />
     <Compile Include="Data\Command.cs" />
     <Compile Include="Data\Error.cs" />
+    <Compile Include="Data\Fight.cs" />
     <Compile Include="Data\Message.cs" />
     <Compile Include="Data\NetError.cs" />
     <Compile Include="Data\Region.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Data\Server.cs" />
     <Compile Include="Data\SQLiteVer.cs" />
     <Compile Include="DebugLog\Debug.cs" />
+    <Compile Include="Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />
     <Compile Include="LoginServer\LoginServer.cs" />
     <Compile Include="MarsApplication.cs" />
