@@ -133,10 +133,10 @@ namespace MarsServer
                 PropertyValue pv = Property.instance.GetValueByK(role.profession);
                 if (pv != null)
                 {
-                    role.strength = pv.strength;
-                    role.agility = pv.agility;
-                    role.stamina = pv.stamina;
-                    role.wit = pv.wit;
+                    role.strength = pv.strength + (pv.strength / 10) * (role.level - 1);
+                    role.agility = pv.agility + (pv.agility / 10) * (role.level - 1);
+                    role.stamina = pv.stamina + (pv.stamina / 10) * (role.level - 1);
+                    role.wit = pv.wit + (pv.wit / 10) * (role.level - 1);
                 }
                 role.expMax = ExpMySQL.instance.GetValueByK(role.level + 1);
                 bundle = new Bundle();
