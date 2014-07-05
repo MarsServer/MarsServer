@@ -99,6 +99,7 @@ namespace MarsServer
                  role.profession = dt.Rows[i][5].ToString();
                  role.level = int.Parse(dt.Rows[i][6].ToString());
                  AddRole(role);
+                 //Debug.Log(role.roleName + "____" + role.accountId);
                  if (role.roleId > maxRoleId)
                  {
                      maxRoleId = role.roleId;
@@ -113,10 +114,7 @@ namespace MarsServer
              {
                  allRolesList[role.accountId] = new List<Role>();
              }
-             else
-             {
-                 allRolesList[role.accountId].Add(role);
-             }
+             allRolesList[role.accountId].Add(role);
              allRolesByRoId.Add(role.roleId, role);
              allRolesByRoName.Add(role.roleName, role);
          }

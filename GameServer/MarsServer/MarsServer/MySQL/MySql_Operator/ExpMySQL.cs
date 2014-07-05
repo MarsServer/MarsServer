@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    public class ExpMySQL
+    public class ExpMySQL : SQLCommon<int, int>
     {
         public readonly static ExpMySQL instance = new ExpMySQL();
 
-        private Dictionary<int, int> exps = new Dictionary<int, int>();
+        //private Dictionary<int, int> exps = new Dictionary<int, int>();
 
-        public void Init()
+        /*public void Init()
         {
             StringBuilder sb_sql = new StringBuilder();
             DataTable dt = null;
@@ -31,13 +31,25 @@ namespace MarsServer
                 //Debug.Log(level + "___________" + expMax);
                 exps.Add(level, expMax);
             }
+        }*/
+        public override void RefreshData(DataRow row)
+        {
+            int level = int.Parse(row[0].ToString());
+            int expMax = int.Parse(row[1].ToString());
+            //Debug.Log(level + "___________" + expMax);
+            datas.Add(level, expMax);
         }
 
-        public int GetMaxExp(int level)
+        public override string GetTableName()
+        {
+            return SQLConstants.MySQL_EXP_LIST;
+        }
+
+        /*public int GetMaxExp(int level)
         {
             int maxExp = 0;
             exps.TryGetValue(level, out maxExp);
             return maxExp;
-        }
+        }*/
     }
 }

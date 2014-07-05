@@ -130,7 +130,7 @@ namespace MarsServer
             {
                 Role role = JsonConvert.DeserializeObject<Role>(getJson);
                 this.role = role;
-                PropertyValue pv = Property.instance.GetPv(role.profession);
+                PropertyValue pv = Property.instance.GetValueByK(role.profession);
                 if (pv != null)
                 {
                     role.strength = pv.strength;
@@ -138,7 +138,7 @@ namespace MarsServer
                     role.stamina = pv.stamina;
                     role.wit = pv.wit;
                 }
-                role.expMax = ExpMySQL.instance.GetMaxExp(role.level + 1);
+                role.expMax = ExpMySQL.instance.GetValueByK(role.level + 1);
                 bundle = new Bundle();
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;

@@ -22,11 +22,30 @@ public class PropertyValue
 
 namespace MarsServer
 {
-    public class Property
+    public class Property : SQLCommon<string, PropertyValue>
     {
         public readonly static Property instance = new Property();
 
-        private Dictionary<string, PropertyValue> propertys = new Dictionary<string, PropertyValue>();
+        public override void RefreshData(DataRow row)
+        {
+            PropertyValue pv = new PropertyValue();
+            pv.pro = int.Parse(row[0].ToString());
+            pv.strength = int.Parse(row[1].ToString());
+            pv.agility = int.Parse(row[2].ToString());
+            pv.stamina = int.Parse(row[3].ToString());
+            pv.wit = int.Parse(row[4].ToString());
+
+            string pro = ((PRO)pv.pro).ToString();
+            //Debug.Log("_______________________________" + pro);
+            datas.Add(pro, pv);
+        }
+
+        public override string GetTableName()
+        {
+            return SQLConstants.MySQL_PROPERTY_LIST;
+        }
+
+        /*private Dictionary<string, PropertyValue> propertys = new Dictionary<string, PropertyValue>();
         public void Init()
         {
             StringBuilder sb_sql = new StringBuilder();
@@ -57,6 +76,6 @@ namespace MarsServer
             PropertyValue pv = null;
             propertys.TryGetValue(pro, out pv);
             return pv;
-        }
+        }*/
     }
 }
