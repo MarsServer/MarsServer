@@ -26,7 +26,6 @@ namespace MarsServer
         void initialization()
         {
             peerGuid = Guid.NewGuid();
-            //PlayersManager.instance.AddUser(peerGuid, this);
         }
 
         private void LinkServerSuccess()
@@ -34,15 +33,18 @@ namespace MarsServer
             Bundle bundle = new Bundle();
             bundle.cmd = Command.LinkServer;
             SendToClient(bundle);
-            /*string json = JsonConvert.SerializeObject(bundle);
-            Dictionary<byte, object> parameter = new Dictionary<byte, object>();
-            parameter.Add((byte)Command.LinkServer, json);
-            OperationResponse response = new OperationResponse((byte)Command.LinkServer, parameter) { ReturnCode = 1, DebugMessage = "" };
-
-            SendOperationResponse(response, new SendParameters());*/
         }
 
         public void StopLinked()
+        {
+
+            DestoryFromRoom();
+            PlayersManager.instance.RemoveUser(this);
+            Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
+            this.Dispose();
+        }
+
+        private void DestoryFromRoom()
         {
             if (role != null)
             {
@@ -53,14 +55,10 @@ namespace MarsServer
                 {
                     if (role != null && role.region == 0)
                     {
-                       peer.SendToClient(bundle);
+                        peer.SendToClient(bundle);
                     }
                 });
             }
-
-            PlayersManager.instance.RemoveUser(this);
-            Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
-            this.Dispose();
         }
 
         protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail)
@@ -192,8 +190,9 @@ namespace MarsServer
                 return;
             }
             else if (cmd == (byte) Command.EnterFight)
-            { 
-                
+            {
+                //DestoryFromRoom();//remove from publiczone
+                Fight fight = JsonConvert.DeserializeObject<Fight>(getJson);
             }
             if (bundle != null)
             {
@@ -210,15 +209,5 @@ namespace MarsServer
 
             SendOperationResponse(response, new SendParameters());
         }
-
-        /*void SendEventToClient(Bundle bundle)
-        {
-            string json = JsonConvert.SerializeObject(bundle);
-            Dictionary<byte, object> parameter = new Dictionary<byte, object>();
-            parameter.Add((byte)bundle.cmd, json);
-            OperationResponse response = new OperationResponse((byte)bundle.cmd, parameter) { ReturnCode = 1, DebugMessage = "" };
-
-            SendOperationResponse(response, new SendParameters());
-        }*/
     }
 }
