@@ -81,6 +81,8 @@
     <Compile Include="MarsPeer.cs" />
     <Compile Include="Message\ServerSetup.cs" />
     <Compile Include="MySQL\DBUtility.cs" />
+    <Compile Include="MySQL\MySql_Operator\ExpMySQL.cs" />
+    <Compile Include="MySQL\MySql_Operator\Property.cs" />
     <Compile Include="MySQL\MySql_Operator\RoleMySQL.cs" />
     <Compile Include="MySQL\SQLConstants.cs" />
     <Compile Include="Players\PlayersManager.cs" />

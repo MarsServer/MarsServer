@@ -2,6 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using MarsServer;
+
+public enum PRO
+{
+    NULL = 0,
+    ZS = 100001,
+    FS = 100002,
+    DZ = 100003
+}
+
 public class Bundle
 {
     [DefaultValue (null)]

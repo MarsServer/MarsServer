@@ -26,5 +26,10 @@ namespace MarsServer
         public const string MySQL_INSERTINTO_ROLE_VALUE = " values('{0}','{1}','{2}','{3}', '{4}','{5}', '{6}', '{7}')";
         public const string MySQL_CHECK_ROLE_NAME = "select * from role where rolename='{0}'";
         public const string MySQL_CHECK_ACCOUNT_ID_ROLE = "select * from role where accountid='{0}'";
+
+        /*property*/
+        public const string MySQL_PROPERTY_LIST = "select * from property";
+        /*exp*/
+        public const string MySQL_EXP_LIST = "select * from exp";
     }
 }

@@ -22,6 +22,12 @@ namespace MarsServer
 
             RoleMySQL.instance.Init();
             Debug.Log("Role is Ok...............................................");
+
+            Property.instance.Init();
+            Debug.Log("Property is Ok...............................................");
+
+            ExpMySQL.instance.Init();
+            Debug.Log("ExpMySQL is Ok...............................................");
         }
 
         protected override void TearDown()

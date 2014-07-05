@@ -32,6 +32,8 @@ public class Role
 
     [DefaultValue(0)]
     public int exp;
+    [DefaultValue(0)]
+    public int expMax;
 
     [DefaultValue(0)]
     public int strength;
