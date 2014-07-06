@@ -189,10 +189,25 @@ namespace MarsServer
                 });
                 return;
             }
-            else if (cmd == (byte) Command.EnterFight)
+            #region About Team
+            else if (cmd == (byte) Command.CreatTeam)
             {
-                //DestoryFromRoom();//remove from publiczone
-                Fight fight = JsonConvert.DeserializeObject<Fight>(getJson);
+            }
+            else if (cmd == (byte)Command.JoinTeam)
+            {
+            }
+            else if (cmd == (byte)Command.LeftTeam)
+            {
+            }
+            else if (cmd == (byte)Command.SwapTeamLeader)
+            {
+            }
+            else if (cmd == (byte)Command.DismissTeam)
+            {
+            }
+            #endregion
+            else if (cmd == (byte)Command.EnterFight)
+            {
             }
             if (bundle != null)
             {
