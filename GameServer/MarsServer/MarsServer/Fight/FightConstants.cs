@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    //is PVP
-    public class RoomConstants
+    public class FightConstants
     {
+        public const int TEAM_MAX_NUM = 5;
     }
 }

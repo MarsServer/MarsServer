@@ -19,6 +19,13 @@
     UpdatePlayer,
     DestroyPlayer,
 
+
+    CreatTeam,
+    JoinTeam,
+    LeftTeam,
+    SwapTeamLeader,
+    DismissTeam,
+
     EnterFight,
 
     NetError,
