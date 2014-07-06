@@ -30,6 +30,9 @@ namespace MarsServer
         public const string ROLR_CREAT_ERROR= "game.role.same.name.error";
 
 
+        /*Team*/
+        public const string CREAT_TEAM_FIALURE = "game.creat.team.failure";
+
         public const string UNKNOW_ERROR = "Unknown.Error";
     }
 }

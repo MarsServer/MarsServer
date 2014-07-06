@@ -192,9 +192,24 @@ namespace MarsServer
             #region About Team
             else if (cmd == (byte) Command.CreatTeam)
             {
+                bundle = new Bundle();
+                bundle.cmd = Command.CreatTeam;
+                string info =  FightManager.instance.CreatTeam(this);
+                if (info == NetSuccess.CREAT_TEAM_SUCCESS)
+                {
+                    bundle.info = NetSuccess.CREAT_TEAM_SUCCESS;
+                }
+                else
+                {
+                    bundle.error = new Error();
+                    bundle.error.message = info;
+                }
+
             }
             else if (cmd == (byte)Command.JoinTeam)
             {
+                Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle.role = FightManager.instance.AddTeamMember(r.roleId, this);
             }
             else if (cmd == (byte)Command.LeftTeam)
             {

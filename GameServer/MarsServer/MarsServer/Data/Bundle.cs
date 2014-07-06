@@ -47,6 +47,9 @@ public class Bundle
     [DefaultValue(null)]
     public Fight fight;
 
+    [DefaultValue(null)]
+    public string info;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    struct FBInfo
+    struct TeamInfo
     {
         public long fightId;
         public long teamId;//team boss role id
@@ -18,27 +18,53 @@ namespace MarsServer
         public static readonly FightManager instance = new FightManager();
 
 
-        private Dictionary<long, FBInfo> infos = new Dictionary<long, FBInfo>();
-        public void EnterFb(Fight fight, MarsPeer peer)
+        private Dictionary<long, TeamInfo> infos = new Dictionary<long, TeamInfo>();
+        public string CreatTeam(MarsPeer peer)
         {
-            FBInfo fbInfo = new FBInfo();
-            fbInfo.fightId = fight.id;
+            TeamInfo fbInfo = new TeamInfo();
+            fbInfo.fightId = 0;
             fbInfo.teamId = peer.role.roleId;
             fbInfo.peers = new List<MarsPeer>();
             fbInfo.peers.Add(peer);
-            infos.Add(fbInfo.teamId, fbInfo);
+            try
+            {
+                infos.Add(fbInfo.teamId, fbInfo);
+                return NetSuccess.CREAT_TEAM_SUCCESS;
+            }
+            catch (System.Exception e)
+            {
+            }
+            return NetError.CREAT_TEAM_FIALURE;
         }
 
-        public void AddTeamMember(long roleId, MarsPeer peer)
+        public Role AddTeamMember(long roleId, MarsPeer peer)
         {
-            FBInfo fbInfo;
+            TeamInfo fbInfo;
             if (infos.TryGetValue (roleId, out fbInfo) == true)
             {
                 if (fbInfo.peers.Count <= FightConstants.TEAM_MAX_NUM)
                 {
                     fbInfo.peers.Add(peer);
+                    return peer.role;
                 }
             }
+            return null;
+        }
+
+        public Role RemoveTeamMember(long roleId, MarsPeer peer)
+        {
+            TeamInfo fbInfo;
+            if (infos.TryGetValue(roleId, out fbInfo) == true)
+            {
+                for (int i = 0; i < fbInfo.peers.Count; i++)
+                {
+                    if (fbInfo.peers[i].role.roleId == peer.role.roleId)
+                    {
+                        return peer.role;
+                    }
+                }
+            }
+            return null;
         }
     }
 }
