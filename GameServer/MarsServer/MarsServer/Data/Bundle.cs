@@ -50,6 +50,10 @@ public class Bundle
     [DefaultValue(null)]
     public string info;
 
+    [DefaultValue(null)]
+    public Team team;
+
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

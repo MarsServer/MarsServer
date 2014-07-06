@@ -74,6 +74,7 @@
     <Compile Include="Data\Role.cs" />
     <Compile Include="Data\Server.cs" />
     <Compile Include="Data\SQLiteVer.cs" />
+    <Compile Include="Data\Team.cs" />
     <Compile Include="DebugLog\Debug.cs" />
     <Compile Include="Fight\FightConstants.cs" />
     <Compile Include="Fight\FightManager.cs" />

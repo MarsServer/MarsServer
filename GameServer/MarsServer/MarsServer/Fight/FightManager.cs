@@ -11,6 +11,7 @@ namespace MarsServer
         public long fightId;
         public long teamId;//team boss role id
         public List<MarsPeer> peers;
+        public Team team;
     }
     //isFB
     public class FightManager
@@ -19,7 +20,8 @@ namespace MarsServer
 
 
         private Dictionary<long, TeamInfo> infos = new Dictionary<long, TeamInfo>();
-        public string CreatTeam(MarsPeer peer)
+
+        public TeamInfo CreatTeam(MarsPeer peer)
         {
             TeamInfo fbInfo = new TeamInfo();
             fbInfo.fightId = 0;
@@ -28,17 +30,24 @@ namespace MarsServer
             fbInfo.peers.Add(peer);
             try
             {
+                fbInfo.team = new Team();
+                fbInfo.team.teamId = fbInfo.teamId;
+                fbInfo.team.roles = new List<Role>();
+                fbInfo.team.roles.Add(peer.role);
+                
+
                 infos.Add(fbInfo.teamId, fbInfo);
                 peer.teamInfo = fbInfo;
-                return NetSuccess.CREAT_TEAM_SUCCESS;
+                return fbInfo;
             }
             catch (System.Exception e)
             {
+                Debug.Log(e);
             }
-            return NetError.CREAT_TEAM_FIALURE;
+            return null;
         }
 
-        public Role AddTeamMember(long roleId, MarsPeer peer)
+        public TeamInfo AddTeamMember(long roleId, MarsPeer peer)
         {
             TeamInfo fbInfo;
             if (infos.TryGetValue (roleId, out fbInfo) == true)
@@ -46,7 +55,8 @@ namespace MarsServer
                 if (fbInfo.peers.Count <= FightConstants.TEAM_MAX_NUM)
                 {
                     fbInfo.peers.Add(peer);
-                    return peer.role;
+                    fbInfo.team.roles.Add(peer.role);
+                    return fbInfo;
                 }
             }
             return null;

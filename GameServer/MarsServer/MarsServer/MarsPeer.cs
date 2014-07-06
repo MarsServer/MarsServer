@@ -195,23 +195,30 @@ namespace MarsServer
             {
                 bundle = new Bundle();
                 bundle.cmd = Command.CreatTeam;
-                string info =  FightManager.instance.CreatTeam(this);
-                if (info == NetSuccess.CREAT_TEAM_SUCCESS)
+                TeamInfo info =  FightManager.instance.CreatTeam(this);
+                if (info != null)
                 {
-                    bundle.info = NetSuccess.CREAT_TEAM_SUCCESS;
+                    bundle.team = info.team;
                 }
                 else
                 {
                     bundle.error = new Error();
-                    bundle.error.message = info;
+                    bundle.error.message = NetError.CREAT_TEAM_FIALURE;
                 }
 
             }
             else if (cmd == (byte)Command.JoinTeam)
             {
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle = new Bundle();
                 bundle.cmd = Command.JoinTeam;
-                bundle.role = FightManager.instance.AddTeamMember(r.roleId, this);
+                TeamInfo info = FightManager.instance.AddTeamMember(r.roleId, this);
+                if (info != null)
+                {
+                    bundle.team = info.team;
+                    BroadcastMessage(info.peers, bundle);
+                    return;
+                }
             }
             else if (cmd == (byte)Command.LeftTeam)
             {
@@ -243,6 +250,14 @@ namespace MarsServer
             OperationResponse response = new OperationResponse((byte)bundle.cmd, parameter) { ReturnCode = 1, DebugMessage = "" };
 
             SendOperationResponse(response, new SendParameters());
+        }
+
+        void BroadcastMessage(List<MarsPeer> peers, Bundle bundle)
+        {
+            foreach (MarsPeer peer in peers)
+            {
+                peer.SendToClient(bundle);
+            }
         }
     }
 }
