@@ -14,6 +14,7 @@ namespace MarsServer
         public Guid peerGuid { get; protected set; }
         public long accountId;
         public Role role;
+        public TeamInfo teamInfo;
 
 
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
@@ -37,9 +38,9 @@ namespace MarsServer
 
         public void StopLinked()
         {
-
+            FightManager.instance.DismissTeam(role);
             DestoryFromRoom();
-            PlayersManager.instance.RemoveUser(this);
+            PlayersManager.instance.RemoveUser(this);            
             Debug.Log("Client has Diconnected" + accountId + "____" + PlayersManager.instance.size);
             this.Dispose();
         }
@@ -209,10 +210,14 @@ namespace MarsServer
             else if (cmd == (byte)Command.JoinTeam)
             {
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle.cmd = Command.JoinTeam;
                 bundle.role = FightManager.instance.AddTeamMember(r.roleId, this);
             }
             else if (cmd == (byte)Command.LeftTeam)
             {
+                Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle.cmd = Command.LeftTeam;
+                bundle.role = FightManager.instance.RemoveTeamMember(r.roleId, this);
             }
             else if (cmd == (byte)Command.SwapTeamLeader)
             {

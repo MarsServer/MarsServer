@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    struct TeamInfo
+    public class TeamInfo
     {
         public long fightId;
         public long teamId;//team boss role id
@@ -29,6 +29,7 @@ namespace MarsServer
             try
             {
                 infos.Add(fbInfo.teamId, fbInfo);
+                peer.teamInfo = fbInfo;
                 return NetSuccess.CREAT_TEAM_SUCCESS;
             }
             catch (System.Exception e)
@@ -65,6 +66,14 @@ namespace MarsServer
                 }
             }
             return null;
+        }
+        public void DismissTeam(Role role)
+        {
+            TeamInfo fbInfo;
+            if (infos.TryGetValue(role.roleId, out fbInfo) == true)
+            {
+                infos.Remove(role.roleId);
+            }
         }
     }
 }
