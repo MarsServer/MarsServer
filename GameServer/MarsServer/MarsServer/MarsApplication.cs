@@ -34,5 +34,18 @@ namespace MarsServer
         {
 
         }
+
+        public static void BroadCastEvent(List<MarsPeer> peers, Bundle bundle)
+        {
+            if (peers.Count > 0 && bundle != null)
+            {
+                byte cmd = (byte)bundle.cmd;
+                string json = JsonConvert.SerializeObject(bundle);
+                Dictionary<byte, object> paramter = new Dictionary<byte, object>();
+                paramter.Add(cmd, json);
+                EventData eventData = new EventData(cmd, paramter);
+                ApplicationBase.Instance.BroadCastEvent<MarsPeer>(eventData, peers, new SendParameters());
+            }
+        }
     }
 }

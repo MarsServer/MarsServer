@@ -8,7 +8,7 @@ namespace MarsServer
 {
     public class PlayersManager
     {
-        public delegate void BroadcastPlayerInfo(MarsPeer peer);
+        public delegate bool BroadcastPlayerInfo(MarsPeer peer);
 
         public readonly static PlayersManager instance = new PlayersManager();
 
@@ -59,35 +59,28 @@ namespace MarsServer
             allusers.Remove(peer);
         }
 
-        public void BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
+        public List<MarsPeer> BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
         {
-            BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
+            return BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
         }
-        public void BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
+        public List<MarsPeer> BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
         {
-            /*foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
-            {
-                if (kvp.Key == accountId && isContain == false)
-                {
-                    continue;
-                }
-                if (broadcastPlayerInfo != null)
-                {
-                    broadcastPlayerInfo(kvp.Value);
-                }
-            }*/
+            List<MarsPeer> peers = new List<MarsPeer>();
             foreach (MarsPeer peer in allusers)
             {
                 if (peer.accountId == accountId && isContain == false) continue;
                 if (broadcastPlayerInfo != null)
                 {
-                    broadcastPlayerInfo(peer);
+                    if (broadcastPlayerInfo(peer))
+                    {
+                        peers.Add(peer);
+                    }
                 }
             }
-            
+            return peers;
         }
 
-        public List<Role> GetAllListRole (long accountId)
+        public List<Role> GetAllListRoleBeSideMe (long accountId)
         {
             List<Role> roles = new List<Role>();
             foreach (MarsPeer peer in allusers)
@@ -99,12 +92,6 @@ namespace MarsServer
                     roles.Add(r);
                 }
             }
-            /*foreach (KeyValuePair<Guid, MarsPeer> kvp in users)
-            {
-                if (kvp.Key == accountId) { continue; }
-                Role role = kvp.Value.role;
-                roles.Add(role);
-            }*/
             return roles;
         }
 

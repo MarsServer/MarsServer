@@ -52,13 +52,15 @@ namespace MarsServer
                 Bundle bundle = new Bundle();
                 bundle.cmd = Command.DestroyPlayer;
                 bundle.role = role;
-                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                List<MarsPeer> peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                 {
                     if (role != null && role.region == 0)
                     {
-                        peer.SendToClient(bundle);
+                        return true;
                     }
+                    return false;
                 });
+                MarsApplication.BroadCastEvent(peers, bundle);
             }
         }
 
@@ -142,18 +144,23 @@ namespace MarsServer
                 bundle.cmd = Command.EnterGame;
                 bundle.role = role;
                 bundle.role.region = 0;
-                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+
+                Bundle newbundle = new Bundle();
+                newbundle.cmd = Command.AddNewPlayer;
+                newbundle.role = role;
+                newbundle.role.region = 0;
+                List<MarsPeer> peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                 {
                     if (role != null && role.region == 0)
                     {
-                        Bundle newbundle = new Bundle();
-                        newbundle.cmd = Command.AddNewPlayer;
-                        newbundle.role = role;
-                        newbundle.role.region = 0;
-                        peer.SendToClient(newbundle);
+                        //
+                        //peer.SendToClient(newbundle);
+                        return true;
                     }
+                    return false;
                 });
-                bundle.onlineRoles = PlayersManager.instance.GetAllListRole(accountId);
+                MarsApplication.BroadCastEvent(peers, newbundle);
+                bundle.onlineRoles = PlayersManager.instance.GetAllListRoleBeSideMe(accountId);
                 
             }
             else if (cmd == (byte)Command.SendChat)
@@ -162,10 +169,12 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.SendChat;
                 bundle.message = message;
-                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                List<MarsPeer> peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                     {
-                        peer.SendToClient(bundle);
+                        return true;
+                        //peer.SendToClient(bundle);
                     });
+                MarsApplication.BroadCastEvent(peers, bundle);
                 //not send myself
                 return;
             }
@@ -181,13 +190,16 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.UpdatePlayer;
                 bundle.role = r;
-                PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                List<MarsPeer> peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                 {
                     if (role != null && role.region == 0)
                     {
-                        peer.SendToClient(bundle);
+                        return true;
+                        //peer.SendToClient(bundle);
                     }
+                    return false;
                 });
+                MarsApplication.BroadCastEvent(peers, bundle);
                 return;
             }
             #region About Team
@@ -216,7 +228,7 @@ namespace MarsServer
                 if (info != null)
                 {
                     bundle.team = info.team;
-                    BroadcastMessage(info.peers, bundle);
+                    //BroadcastMessage(info.peers, bundle);
                     return;
                 }
             }
@@ -252,12 +264,12 @@ namespace MarsServer
             SendOperationResponse(response, new SendParameters());
         }
 
-        void BroadcastMessage(List<MarsPeer> peers, Bundle bundle)
+        /*void BroadcastMessage(List<MarsPeer> peers, Bundle bundle)
         {
             foreach (MarsPeer peer in peers)
             {
                 peer.SendToClient(bundle);
             }
-        }
+        }*/
     }
 }
