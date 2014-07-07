@@ -60,7 +60,7 @@ namespace MarsServer
                     }
                     return false;
                 });
-                MarsApplication.BroadCastEvent(peers, bundle);
+                BroadCastEvent(peers, bundle);
             }
         }
 
@@ -159,7 +159,7 @@ namespace MarsServer
                     }
                     return false;
                 });
-                MarsApplication.BroadCastEvent(peers, newbundle);
+                BroadCastEvent(peers, newbundle);
                 bundle.onlineRoles = PlayersManager.instance.GetAllListRoleBeSideMe(accountId);
                 
             }
@@ -174,7 +174,7 @@ namespace MarsServer
                         return true;
                         //peer.SendToClient(bundle);
                     });
-                MarsApplication.BroadCastEvent(peers, bundle);
+                BroadCastEvent(peers, bundle);
                 //not send myself
                 return;
             }
@@ -199,7 +199,7 @@ namespace MarsServer
                     }
                     return false;
                 });
-                MarsApplication.BroadCastEvent(peers, bundle);
+                BroadCastEvent(peers, bundle);
                 return;
             }
             #region About Team
@@ -228,7 +228,7 @@ namespace MarsServer
                 if (info != null)
                 {
                     bundle.team = info.team;
-                    MarsApplication.BroadCastEvent(info.peers, bundle);
+                    BroadCastEvent(info.peers, bundle);
                     return;
                 }
             }
@@ -264,12 +264,17 @@ namespace MarsServer
             SendOperationResponse(response, new SendParameters());
         }
 
-        /*void BroadcastMessage(List<MarsPeer> peers, Bundle bundle)
+        public void BroadCastEvent(List<MarsPeer> peers, Bundle bundle)
         {
-            foreach (MarsPeer peer in peers)
+            if (peers.Count > 0 && bundle != null)
             {
-                peer.SendToClient(bundle);
+                byte cmd = (byte)bundle.cmd;
+                string json = JsonConvert.SerializeObject(bundle);
+                Dictionary<byte, object> paramter = new Dictionary<byte, object>();
+                paramter.Add(cmd, json);
+                EventData eventData = new EventData(cmd, paramter);
+                ApplicationBase.Instance.BroadCastEvent<MarsPeer>(eventData, peers, new SendParameters());
             }
-        }*/
+        }
     }
 }
