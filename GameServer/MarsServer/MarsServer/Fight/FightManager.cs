@@ -55,7 +55,13 @@ namespace MarsServer
                 if (fbInfo.peers.Count <= FightConstants.TEAM_MAX_NUM)
                 {
                     fbInfo.peers.Add(peer);
-                    fbInfo.team.roles.Add(peer.role);
+                    Role role = new Role();
+                    role.accountId = peer.role.accountId;
+                    role.roleId = peer.role.roleId;
+                    role.roleName = peer.role.roleName;
+                    role.profession = peer.role.profession;
+                    role.level = peer.role.level;
+                    fbInfo.team.roles.Add(role);
                     return fbInfo;
                 }
             }

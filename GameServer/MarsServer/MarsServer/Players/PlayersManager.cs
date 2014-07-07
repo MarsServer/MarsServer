@@ -16,6 +16,11 @@ namespace MarsServer
        // private Dictionary<long, MarsPeer> userIdDict = new Dictionary<long, MarsPeer>();
         private List<MarsPeer> allusers = new List<MarsPeer>();
 
+        public List<MarsPeer> GetAllUsers()
+        {
+            return allusers;
+        }
+
         public int size { get { return users.Count; } }
 
         public string AddUser(long accountId, Guid guidPeer, MarsPeer marsPeer)

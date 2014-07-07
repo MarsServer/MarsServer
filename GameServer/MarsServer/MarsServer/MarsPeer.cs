@@ -228,7 +228,7 @@ namespace MarsServer
                 if (info != null)
                 {
                     bundle.team = info.team;
-                    //BroadcastMessage(info.peers, bundle);
+                    MarsApplication.BroadCastEvent(info.peers, bundle);
                     return;
                 }
             }
