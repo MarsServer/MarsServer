@@ -269,20 +269,49 @@ namespace MarsServer
                 {
                     teamInfo = FightManager.instance.CreatTeam(this);
                 }
+                
                 teamInfo.team.fightId = fight.id;
+                role.region = (int)fight.id;
+                for (int i = 0; i < teamInfo.team.roles.Count; i++)
+                {
+                    if (teamInfo.team.roles[i].roleId == role.roleId)
+                    {
+                        teamInfo.team.roles[i].region = (int) fight.id;
+                        break;
+                    }
+                }
+                bundle.fight.team = teamInfo.team;
                 FightManager.instance.ModifyTeamInfo(teamInfo);
-                bundle.team = teamInfo.team;
+                if (teamInfo.teamId == role.roleId)
+                {
+                    Debug.Log("Modify_____Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+                    BroadCastEvent(FightManager.instance.GetListBesideMe (teamInfo, role), bundle);
+                }
+                DestoryFromRoom();
+                //role.region = 1;
                 //bundle.fight
             }
             else if (cmd == (byte)Command.PlayerDone)
             {
-                bundle = new Bundle();
-                bundle.cmd = Command.PlayerDone;
+                Bundle newBundle = new Bundle();
+                newBundle.cmd = Command.PlayerDone;
+                Role role = new Role();
+                role.accountId = this.role.accountId;
+                role.roleId = this.role.roleId;
+                role.roleName = this.role.roleName;
+                role.profession = this.role.profession;
+                role.x = 0;
+                role.z = 0;
+                role.xRo = 0;
+                role.zRo = 0;
+                role.action = 1;
+                newBundle.role = role;
                 if (teamInfo != null)
                 {
-                    BroadCastEvent(teamInfo.peers, bundle);
+                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamInfo, role), newBundle);
                 }
-                return;
+                bundle = new Bundle();
+                bundle.cmd = Command.PlayerDone;
             }
             if (bundle != null)
             {
