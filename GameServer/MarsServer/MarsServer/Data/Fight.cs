@@ -24,7 +24,7 @@ public class Fight//FB
     [DefaultValue(null)]
     public string difficulty;
     [DefaultValue(0)]
-    public string level;
+    public int level;
     [DefaultValue(null)]
     public Team team;
 

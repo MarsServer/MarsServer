@@ -247,6 +247,7 @@ namespace MarsServer
             else if (cmd == (byte)Command.LeftTeam)
             {
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle = new Bundle();
                 bundle.cmd = Command.LeftTeam;
                 bundle.role = FightManager.instance.RemoveTeamMember(r.roleId, this);
             }
@@ -259,7 +260,29 @@ namespace MarsServer
             #endregion
             else if (cmd == (byte)Command.EnterFight)
             {
-                
+                Fight fight = JsonConvert.DeserializeObject<Fight>(getJson);
+                bundle = new Bundle();
+                bundle.cmd = Command.EnterFight;
+                bundle.fight = new Fight();
+                bundle.fight.id = fight.id;
+                if (teamInfo == null)
+                {
+                    teamInfo = FightManager.instance.CreatTeam(this);
+                }
+                teamInfo.team.fightId = fight.id;
+                FightManager.instance.ModifyTeamInfo(teamInfo);
+                bundle.team = teamInfo.team;
+                //bundle.fight
+            }
+            else if (cmd == (byte)Command.PlayerDone)
+            {
+                bundle = new Bundle();
+                bundle.cmd = Command.PlayerDone;
+                if (teamInfo != null)
+                {
+                    BroadCastEvent(teamInfo.peers, bundle);
+                }
+                return;
             }
             if (bundle != null)
             {

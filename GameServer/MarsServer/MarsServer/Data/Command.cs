@@ -28,6 +28,8 @@
 
     EnterFight,
 
+    PlayerDone,
+
     NetError,
     AbortDiscount,
 }

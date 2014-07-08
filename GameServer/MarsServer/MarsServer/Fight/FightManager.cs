@@ -68,6 +68,14 @@ namespace MarsServer
             return null;
         }
 
+        public void ModifyTeamInfo(TeamInfo info)
+        {
+            if (info != null)
+            {
+                infos[info.teamId] = info;
+            }
+        }
+
         public Role RemoveTeamMember(long roleId, MarsPeer peer)
         {
             TeamInfo fbInfo;
