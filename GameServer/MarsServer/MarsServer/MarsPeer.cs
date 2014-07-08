@@ -169,12 +169,23 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.SendChat;
                 bundle.message = message;
-                List<MarsPeer> peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
+                List<MarsPeer> peers = null;
+                if (message.chatType == ChatType.World)
+                {
+                    peers = PlayersManager.instance.BroastPlayerSomething(accountId, (MarsPeer peer) =>
                     {
                         return true;
                         //peer.SendToClient(bundle);
                     });
-                BroadCastEvent(peers, bundle);
+                }
+                else if (message.chatType == ChatType.Team)
+                {
+                    peers = FightManager.instance.GetListBesideMe(teamInfo, role);
+                }
+                if (peers != null)
+                {
+                    BroadCastEvent(peers, bundle);
+                }
                 //not send myself
                 return;
             }
@@ -227,6 +238,7 @@ namespace MarsServer
                 TeamInfo info = FightManager.instance.AddTeamMember(r.roleId, this);
                 if (info != null)
                 {
+                    teamInfo = info;
                     bundle.team = info.team;
                     BroadCastEvent(info.peers, bundle);
                     return;
@@ -247,6 +259,7 @@ namespace MarsServer
             #endregion
             else if (cmd == (byte)Command.EnterFight)
             {
+                
             }
             if (bundle != null)
             {

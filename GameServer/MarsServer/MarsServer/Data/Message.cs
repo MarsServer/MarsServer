@@ -9,6 +9,7 @@ public enum ChatType
     World,
     Person,
     System,
+    Team,
 }
 public class Message
 {

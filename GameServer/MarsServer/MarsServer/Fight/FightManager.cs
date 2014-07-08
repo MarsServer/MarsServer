@@ -86,10 +86,31 @@ namespace MarsServer
         public void DismissTeam(Role role)
         {
             TeamInfo fbInfo;
-            if (infos.TryGetValue(role.roleId, out fbInfo) == true)
+            if (role != null)
             {
-                infos.Remove(role.roleId);
+                if (infos.TryGetValue(role.roleId, out fbInfo) == true)
+                {
+                    infos.Remove(role.roleId);
+                }
             }
+        }
+
+        public List<MarsPeer> GetListBesideMe (TeamInfo teamInfo, Role role)
+        {
+            List<MarsPeer> peers = new List<MarsPeer> ();
+            if (teamInfo == null)
+            {
+                return null;
+            }
+            foreach (MarsPeer peer in teamInfo.peers)
+            {
+                if (role.roleId == peer.role.roleId)
+                {
+                    continue;
+                }
+                peers.Add(peer);
+            }
+            return peers;
         }
     }
 }
