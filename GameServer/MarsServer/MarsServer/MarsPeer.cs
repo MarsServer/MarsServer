@@ -160,7 +160,14 @@ namespace MarsServer
                     return false;
                 });
                 BroadCastEvent(peers, newbundle);
-                bundle.onlineRoles = PlayersManager.instance.GetAllListRoleBeSideMe(accountId);
+                bundle.onlineRoles = new List<Role>();
+                foreach (Role ro in PlayersManager.instance.GetAllListRoleBeSideMe(accountId))
+                {
+                    if (ro.region == 0)
+                    {
+                        bundle.onlineRoles.Add(ro);
+                    }
+                }
                 
             }
             else if (cmd == (byte)Command.SendChat)
@@ -257,6 +264,32 @@ namespace MarsServer
             else if (cmd == (byte)Command.DismissTeam)
             {
             }
+            else if (cmd == (byte)Command.TeamUpdate)
+            {
+                Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                this.role.x = r.x;
+                this.role.z = r.z;
+                this.role.xRo = r.xRo;
+                this.role.zRo = r.zRo;
+                this.role.action = r.action;
+
+                bundle = new Bundle();
+                bundle.cmd = Command.TeamUpdate;
+                bundle.role = r;
+                if (teamInfo != null)
+                {
+                    List<MarsPeer> peers = new List<MarsPeer> ();
+                    foreach (MarsPeer peer in FightManager.instance.GetListBesideMe(teamInfo, role))
+                    {
+                        if (peer.role.region == teamInfo.team.fightId)
+                        {
+                            peers.Add(peer);
+                        }
+                    }
+                    BroadCastEvent(peers, bundle);
+                }
+                
+            }
             #endregion
             else if (cmd == (byte)Command.EnterFight)
             {
@@ -269,14 +302,14 @@ namespace MarsServer
                 {
                     teamInfo = FightManager.instance.CreatTeam(this);
                 }
-                
+
                 teamInfo.team.fightId = fight.id;
                 role.region = (int)fight.id;
                 for (int i = 0; i < teamInfo.team.roles.Count; i++)
                 {
                     if (teamInfo.team.roles[i].roleId == role.roleId)
                     {
-                        teamInfo.team.roles[i].region = (int) fight.id;
+                        teamInfo.team.roles[i].region = (int)fight.id;
                         break;
                     }
                 }
@@ -285,7 +318,7 @@ namespace MarsServer
                 if (teamInfo.teamId == role.roleId)
                 {
                     Debug.Log("Modify_____Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                    BroadCastEvent(FightManager.instance.GetListBesideMe (teamInfo, role), bundle);
+                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamInfo, role), bundle);
                 }
                 DestoryFromRoom();
                 //role.region = 1;
