@@ -256,13 +256,40 @@ namespace MarsServer
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
                 bundle = new Bundle();
                 bundle.cmd = Command.LeftTeam;
+                List<MarsPeer> peers = new List<MarsPeer>();
+                foreach (MarsPeer p in FightManager.instance.GetTeamInfo (teamInfo.teamId).peers)
+                {
+                    peers.Add(p);
+                }
                 bundle.role = FightManager.instance.RemoveTeamMember(r.roleId, this);
+                if (peers.Count == 1)
+                {
+                    FightManager.instance.DismissTeam(role);
+                }
+                BroadCastEvent(peers, bundle);
+                return;
+                
             }
             else if (cmd == (byte)Command.SwapTeamLeader)
             {
+                Role r = JsonConvert.DeserializeObject<Role>(getJson);
+                bundle = new Bundle();
+                bundle.cmd = Command.SwapTeamLeader;
+                TeamInfo teamInfo = FightManager.instance.SwapTeamLeader(r, this);
+                bundle.team = teamInfo.team;
+                BroadCastEvent(FightManager.instance.GetTeamInfo (teamInfo.teamId).peers, bundle);
+                return;
             }
             else if (cmd == (byte)Command.DismissTeam)
             {
+                if (this.role != null)
+                {
+                    List<MarsPeer> peers = FightManager.instance.DismissTeam(this.role);
+                    bundle = new Bundle();
+                    bundle.cmd = Command.DismissTeam;
+                    BroadCastEvent(peers, bundle);
+                    return;
+                }
             }
             else if (cmd == (byte)Command.TeamUpdate)
             {

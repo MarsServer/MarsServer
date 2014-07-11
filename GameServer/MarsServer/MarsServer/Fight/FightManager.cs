@@ -21,6 +21,16 @@ namespace MarsServer
 
         private Dictionary<long, TeamInfo> infos = new Dictionary<long, TeamInfo>();
 
+        public TeamInfo GetTeamInfo(long teamId)
+        {
+            TeamInfo teamInfo = null;
+            if (infos.TryGetValue(teamId, out teamInfo))
+            {
+                Debug.Log("Cann't find " + teamId);
+            }
+            return teamInfo;
+        }
+
         public TeamInfo CreatTeam(MarsPeer peer)
         {
             TeamInfo fbInfo = new TeamInfo();
@@ -42,7 +52,7 @@ namespace MarsServer
             }
             catch (System.Exception e)
             {
-                Debug.Log(e);
+                //Debug.Log(e);
             }
             return null;
         }
@@ -85,22 +95,42 @@ namespace MarsServer
                 {
                     if (fbInfo.peers[i].role.roleId == peer.role.roleId)
                     {
+                        fbInfo.team.roles.Remove(peer.role);
+                        fbInfo.peers.Remove(peer);
+                        Debug.Log(fbInfo.team.roles.Count + "_____" + fbInfo.peers);
                         return peer.role;
                     }
                 }
             }
             return null;
         }
-        public void DismissTeam(Role role)
+
+        public TeamInfo SwapTeamLeader(Role role, MarsPeer peer)
         {
+            TeamInfo teaminfo = null;
+            if (infos.TryGetValue (peer.role.roleId, out teaminfo))
+            {
+                infos.Remove(teaminfo.teamId);
+                teaminfo.teamId = role.roleId;
+                teaminfo.team.teamId = role.roleId;
+                infos.Add(teaminfo.teamId, teaminfo);
+            }
+            return teaminfo;
+        }
+
+        public List<MarsPeer> DismissTeam(Role role)
+        {
+            List<MarsPeer> peers = null;
             TeamInfo fbInfo;
             if (role != null)
             {
                 if (infos.TryGetValue(role.roleId, out fbInfo) == true)
                 {
+                    peers = fbInfo.peers;
                     infos.Remove(role.roleId);
                 }
             }
+            return peers;
         }
 
         public List<MarsPeer> GetListBesideMe (TeamInfo teamInfo, Role role)
