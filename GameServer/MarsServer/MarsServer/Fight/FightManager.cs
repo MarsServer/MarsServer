@@ -47,7 +47,7 @@ namespace MarsServer
                 
 
                 infos.Add(fbInfo.teamId, fbInfo);
-                peer.teamInfo = fbInfo;
+                peer.teamId = fbInfo.teamId;
                 return fbInfo;
             }
             catch (System.Exception e)
@@ -114,6 +114,11 @@ namespace MarsServer
                 teaminfo.teamId = role.roleId;
                 teaminfo.team.teamId = role.roleId;
                 infos.Add(teaminfo.teamId, teaminfo);
+
+                foreach (MarsPeer p in teaminfo.peers)
+                {
+                    p.teamId = teaminfo.teamId;
+                }
             }
             return teaminfo;
         }
@@ -133,8 +138,9 @@ namespace MarsServer
             return peers;
         }
 
-        public List<MarsPeer> GetListBesideMe (TeamInfo teamInfo, Role role)
+        public List<MarsPeer> GetListBesideMe (long teamId, Role role)
         {
+            TeamInfo teamInfo = GetTeamInfo(teamId);
             List<MarsPeer> peers = new List<MarsPeer> ();
             if (teamInfo == null)
             {

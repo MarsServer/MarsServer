@@ -14,7 +14,8 @@ namespace MarsServer
         public Guid peerGuid { get; protected set; }
         public long accountId;
         public Role role;
-        public TeamInfo teamInfo;
+        //public TeamInfo teamInfo;
+        public long teamId;
 
 
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
@@ -188,7 +189,7 @@ namespace MarsServer
                 }
                 else if (message.chatType == ChatType.Team)
                 {
-                    peers = FightManager.instance.GetListBesideMe(teamInfo, role);
+                    peers = FightManager.instance.GetListBesideMe(teamId, role);
                 }
                 if (peers != null)
                 {
@@ -246,7 +247,7 @@ namespace MarsServer
                 TeamInfo info = FightManager.instance.AddTeamMember(r.roleId, this);
                 if (info != null)
                 {
-                    teamInfo = info;
+                    //teamInfo = info;
                     bundle.team = info.team;
                     BroadCastEvent(info.peers, bundle);
                     return;
@@ -258,14 +259,30 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.LeftTeam;
                 List<MarsPeer> peers = new List<MarsPeer>();
-                foreach (MarsPeer p in FightManager.instance.GetTeamInfo (teamInfo.teamId).peers)
+                Role secondRole = null;
+                foreach (MarsPeer p in FightManager.instance.GetTeamInfo (teamId).peers)
                 {
+                    if (secondRole == null)
+                    {
+                        if (p.role.roleId != teamId)
+                        {
+                            secondRole = p.role;
+                        }
+                    }
                     peers.Add(p);
                 }
                 bundle.role = FightManager.instance.RemoveTeamMember(r.roleId, this);
                 if (peers.Count == 1)
                 {
                     FightManager.instance.DismissTeam(role);
+                }
+                else if (teamId == role.roleId)//leader
+                {
+                    Bundle newBundle = new Bundle();
+                    newBundle.cmd = Command.SwapTeamLeader;
+                    TeamInfo teamInfo = FightManager.instance.SwapTeamLeader(secondRole, this);
+                    newBundle.team = teamInfo.team;
+                    BroadCastEvent(FightManager.instance.GetTeamInfo(teamInfo.teamId).peers, newBundle);
                 }
                 BroadCastEvent(peers, bundle);
                 return;
@@ -304,12 +321,12 @@ namespace MarsServer
                 bundle = new Bundle();
                 bundle.cmd = Command.TeamUpdate;
                 bundle.role = r;
-                if (teamInfo != null)
+                if (teamId != 0)
                 {
                     List<MarsPeer> peers = new List<MarsPeer> ();
-                    foreach (MarsPeer peer in FightManager.instance.GetListBesideMe(teamInfo, role))
+                    foreach (MarsPeer peer in FightManager.instance.GetListBesideMe(teamId, role))
                     {
-                        if (peer.role.region == teamInfo.team.fightId)
+                        if (peer.role.region == FightManager.instance.GetTeamInfo (teamId).fightId)
                         {
                             peers.Add(peer);
                         }
@@ -326,12 +343,14 @@ namespace MarsServer
                 bundle.cmd = Command.EnterFight;
                 bundle.fight = new Fight();
                 bundle.fight.id = fight.id;
-                if (teamInfo == null)
+                if (teamId == 0)
                 {
-                    teamInfo = FightManager.instance.CreatTeam(this);
+                    teamId = FightManager.instance.CreatTeam(this).teamId;
                 }
-
-                teamInfo.team.fightId = fight.id;
+                TeamInfo teamInfo = FightManager.instance.GetTeamInfo(teamId);
+                teamInfo.fightId = fight.id;
+                FightManager.instance.ModifyTeamInfo(teamInfo);
+                //teamInfo.team.fightId = fight.id;
                 role.region = (int)fight.id;
                 for (int i = 0; i < teamInfo.team.roles.Count; i++)
                 {
@@ -346,7 +365,7 @@ namespace MarsServer
                 if (teamInfo.teamId == role.roleId)
                 {
                     Debug.Log("Modify_____Okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamInfo, role), bundle);
+                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamId, role), bundle);
                 }
                 DestoryFromRoom();
                 //role.region = 1;
@@ -367,9 +386,9 @@ namespace MarsServer
                 role.zRo = 0;
                 role.action = 1;
                 newBundle.role = role;
-                if (teamInfo != null)
+                if (teamId != 0)
                 {
-                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamInfo, role), newBundle);
+                    BroadCastEvent(FightManager.instance.GetListBesideMe(teamId, role), newBundle);
                 }
                 bundle = new Bundle();
                 bundle.cmd = Command.PlayerDone;
