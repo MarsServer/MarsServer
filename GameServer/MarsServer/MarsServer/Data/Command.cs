@@ -31,6 +31,8 @@
 
     PlayerDone,
 
+    MonsterStateUpdate,
+
     NetError,
     AbortDiscount,
 }
