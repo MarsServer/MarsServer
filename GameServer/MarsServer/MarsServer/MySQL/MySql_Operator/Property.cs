@@ -18,6 +18,8 @@ public class PropertyValue
     public int stamina;
     [DefaultValue(0)]
     public int wit;
+    [DefaultValue(0f)]
+    public float critical;
 }
 
 namespace MarsServer
@@ -34,6 +36,7 @@ namespace MarsServer
             pv.agility = int.Parse(row[2].ToString());
             pv.stamina = int.Parse(row[3].ToString());
             pv.wit = int.Parse(row[4].ToString());
+            pv.critical = float.Parse(row[5].ToString());
 
             string pro = ((PRO)pv.pro).ToString();
             //Debug.Log("_______________________________" + pro);

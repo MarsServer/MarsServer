@@ -43,7 +43,8 @@ public class Role
     public int stamina;
     [DefaultValue(0)]
     public int wit;
-
+    [DefaultValue(0f)]
+    public float critical;
 
 	[DefaultValue (0F)]
 	public float speed;

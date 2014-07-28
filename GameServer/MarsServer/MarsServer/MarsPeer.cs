@@ -138,6 +138,7 @@ namespace MarsServer
                     role.agility = pv.agility + (pv.agility / 10) * (role.level - 1);
                     role.stamina = pv.stamina + (pv.stamina / 10) * (role.level - 1);
                     role.wit = pv.wit + (pv.wit / 10) * (role.level - 1);
+                    role.critical = pv.critical;
                 }
                 role.expMax = ExpMySQL.instance.GetValueByK(role.level + 1);
                 bundle = new Bundle();
