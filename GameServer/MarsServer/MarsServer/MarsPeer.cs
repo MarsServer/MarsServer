@@ -13,9 +13,8 @@ namespace MarsServer
     {
         public Guid peerGuid { get; protected set; }
         public long accountId;
-        //public Role role;
+        public Role role;
         //public TeamInfo teamInfo;
-        public long roleId;
         public long teamId;
 
 
@@ -97,7 +96,7 @@ namespace MarsServer
                 if (message == null)
                 {
                     bundle.server = server;
-                    bundle.roles = RoleMySQL.instance.GetDataListByAccountId(server.accountId);
+                    bundle.roles = RoleMySQL.instance.GetDataList(server.accountId);
                 }
                 else
                 {

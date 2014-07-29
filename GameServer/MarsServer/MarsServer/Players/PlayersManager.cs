@@ -100,9 +100,9 @@ namespace MarsServer
             return roles;
         }
 
-        /*public void UpdateRoleInfo(Guid peerGuid, Role role)
+        public void UpdateRoleInfo(Guid peerGuid, Role role)
         {
             users[peerGuid].role = role;
-        }*/
+        }
     }
 }
