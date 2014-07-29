@@ -141,11 +141,22 @@ namespace MarsServer
              return maxRoleId.ToString ();//GetQueryValue(SQLConstants.MySQL_CHECK_ROLE_NAME, r.roleName, "roleid");
          }
 
-         public List<Role> GetDataList(long value)
+         public List<Role> GetDataListByAccountId(long value)
          {
              List<Role> roles = null;
              allRolesList.TryGetValue(value, out roles);
-             return roles;
+
+             List<Role> m_Roles = new List<Role>();
+             foreach (Role r in roles)
+             {
+                 Role for_r = new Role();
+                 for_r.roleId = r.roleId;
+                 for_r.profession = r.profession;
+                 for_r.roleName = r.roleName;
+                 for_r.level = r.level;
+                 m_Roles.Add(for_r);
+             }
+             return m_Roles;
          }
     }
 }

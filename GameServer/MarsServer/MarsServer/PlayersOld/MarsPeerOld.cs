@@ -96,7 +96,7 @@ namespace MarsServer
                 if (message == null)
                 {
                     bundle.server = server;
-                    bundle.roles = RoleMySQL.instance.GetDataList(server.accountId);
+                    bundle.roles = RoleMySQL.instance.GetDataListByAccountId(server.accountId);
                 }
                 else
                 {
