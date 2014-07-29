@@ -11,6 +11,7 @@ namespace MarsServer
     public class MarsPeer : PeerBase
     {
         public long accountId;
+        public long roleId;
 
 
         #region constructor And HandshakeHandle
@@ -30,7 +31,9 @@ namespace MarsServer
 
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
-            //TODO:
+            ActorCollection.Instance.HandleDisconnect(accountId);
+            Debug.Log(string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, ActorCollection.Instance.Size));
+            //this.Dispose();
         }
 
         protected override void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters)
@@ -48,6 +51,8 @@ namespace MarsServer
                 case Command.ServerSelect:
                     bundle = HandleServerSelectOnOperation(getClientJson, cmd);
                     break;
+                case Command.CreatRole:
+                    break;
             }
 
             if (bundle != null)
@@ -55,8 +60,6 @@ namespace MarsServer
                 bundle.cmd = cmd;
                 SendClientEvent(bundle);
             }
-            string message = string.Format("Unknown operation code {0}", operationRequest.OperationCode);
-            Debug.Log(message);
         }
 
         #region HandleServerSelectOnOperation
@@ -64,14 +67,26 @@ namespace MarsServer
         {
             Server server = JsonConvert.DeserializeObject<Server>(json);
             Bundle bundle = new Bundle();
+
             accountId = server.accountId;
-            bundle.roles = RoleMySQL.instance.GetDataListByAccountId(accountId);
+
+            long id = 0;
+            bool isLogined = ActorCollection.Instance.HandleRoleLogin(accountId, this);
+            if (isLogined == false)
+            {
+                bundle.error = new Error();
+                bundle.error.message = NetError.SAME_ACCOUNT_DISCOUNT_ERROR;
+            }
+            else
+            {
+                bundle.roles = RoleMySQL.instance.GetDataListByAccountId(accountId);
+            }
             return bundle;
         }
         #endregion
 
 
-        #region Link Client
+        #region Link Client Event
         public void SendClientEvent(Bundle bundle)
         {
             OperationResponse response = new OperationResponse((byte)bundle.cmd, GetParameter (bundle)) { ReturnCode = 1, DebugMessage = "" };
