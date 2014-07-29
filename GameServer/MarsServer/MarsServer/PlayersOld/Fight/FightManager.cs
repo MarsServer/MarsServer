@@ -10,7 +10,7 @@ namespace MarsServer
     {
         public long fightId;
         public long teamId;//team boss role id
-        public List<MarsPeer> peers;
+        public List<MarsPeerOld> peers;
         public Team team;
     }
     //isFB
@@ -31,12 +31,12 @@ namespace MarsServer
             return teamInfo;
         }
 
-        public TeamInfo CreatTeam(MarsPeer peer)
+        public TeamInfo CreatTeam(MarsPeerOld peer)
         {
             TeamInfo fbInfo = new TeamInfo();
             fbInfo.fightId = 0;
             fbInfo.teamId = peer.role.roleId;
-            fbInfo.peers = new List<MarsPeer>();
+            fbInfo.peers = new List<MarsPeerOld>();
             fbInfo.peers.Add(peer);
             try
             {
@@ -57,7 +57,7 @@ namespace MarsServer
             return null;
         }
 
-        public TeamInfo AddTeamMember(long roleId, MarsPeer peer)
+        public TeamInfo AddTeamMember(long roleId, MarsPeerOld peer)
         {
             TeamInfo fbInfo;
             if (infos.TryGetValue (roleId, out fbInfo) == true)
@@ -86,7 +86,7 @@ namespace MarsServer
             }
         }
 
-        public Role RemoveTeamMember(long roleId, MarsPeer peer)
+        public Role RemoveTeamMember(long roleId, MarsPeerOld peer)
         {
             TeamInfo fbInfo;
             if (infos.TryGetValue(roleId, out fbInfo) == true)
@@ -105,7 +105,7 @@ namespace MarsServer
             return null;
         }
 
-        public TeamInfo SwapTeamLeader(Role role, MarsPeer peer)
+        public TeamInfo SwapTeamLeader(Role role, MarsPeerOld peer)
         {
             TeamInfo teaminfo = null;
             if (infos.TryGetValue (peer.role.roleId, out teaminfo))
@@ -115,7 +115,7 @@ namespace MarsServer
                 teaminfo.team.teamId = role.roleId;
                 infos.Add(teaminfo.teamId, teaminfo);
 
-                foreach (MarsPeer p in teaminfo.peers)
+                foreach (MarsPeerOld p in teaminfo.peers)
                 {
                     p.teamId = teaminfo.teamId;
                 }
@@ -123,9 +123,9 @@ namespace MarsServer
             return teaminfo;
         }
 
-        public List<MarsPeer> DismissTeam(Role role)
+        public List<MarsPeerOld> DismissTeam(Role role)
         {
-            List<MarsPeer> peers = null;
+            List<MarsPeerOld> peers = null;
             TeamInfo fbInfo;
             if (role != null)
             {
@@ -138,15 +138,15 @@ namespace MarsServer
             return peers;
         }
 
-        public List<MarsPeer> GetListBesideMe (long teamId, Role role)
+        public List<MarsPeerOld> GetListBesideMe (long teamId, Role role)
         {
             TeamInfo teamInfo = GetTeamInfo(teamId);
-            List<MarsPeer> peers = new List<MarsPeer> ();
+            List<MarsPeerOld> peers = new List<MarsPeerOld> ();
             if (teamInfo == null)
             {
                 return null;
             }
-            foreach (MarsPeer peer in teamInfo.peers)
+            foreach (MarsPeerOld peer in teamInfo.peers)
             {
                 if (role.roleId == peer.role.roleId)
                 {

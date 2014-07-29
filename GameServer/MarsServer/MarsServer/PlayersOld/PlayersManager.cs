@@ -8,27 +8,27 @@ namespace MarsServer
 {
     public class PlayersManager
     {
-        public delegate bool BroadcastPlayerInfo(MarsPeer peer);
+        public delegate bool BroadcastPlayerInfo(MarsPeerOld peer);
 
         public readonly static PlayersManager instance = new PlayersManager();
 
-        private Dictionary<Guid, MarsPeer> users = new Dictionary<Guid, MarsPeer>();
+        private Dictionary<Guid, MarsPeerOld> users = new Dictionary<Guid, MarsPeerOld>();
        // private Dictionary<long, MarsPeer> userIdDict = new Dictionary<long, MarsPeer>();
-        private List<MarsPeer> allusers = new List<MarsPeer>();
+        private List<MarsPeerOld> allusers = new List<MarsPeerOld>();
 
-        public List<MarsPeer> GetAllUsers()
+        public List<MarsPeerOld> GetAllUsers()
         {
             return allusers;
         }
 
         public int size { get { return users.Count; } }
 
-        public string AddUser(long accountId, Guid guidPeer, MarsPeer marsPeer)
+        public string AddUser(long accountId, Guid guidPeer, MarsPeerOld marsPeer)
         {
             bool isLogined = false;//users.ContainsKey(accountId);
-            MarsPeer _marsPeer = null;
+            MarsPeerOld _marsPeer = null;
             //isLogined = userIdDict.TryGetValue(accountId, out _marsPeer);
-            foreach (MarsPeer peer in allusers)
+            foreach (MarsPeerOld peer in allusers)
             {
                 if (peer.accountId == accountId)
                 {
@@ -57,21 +57,21 @@ namespace MarsServer
             return null;
         }
 
-        public void RemoveUser(MarsPeer peer)
+        public void RemoveUser(MarsPeerOld peer)
         {
             users.Remove(peer.peerGuid);
             //userIdDict.Remove(peer.accountId);
             allusers.Remove(peer);
         }
 
-        public List<MarsPeer> BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
+        public List<MarsPeerOld> BroastPlayerSomething(long accountId, BroadcastPlayerInfo broadcastPlayerInfo)//dont send to myself
         {
             return BroastPlayerSomething(accountId, false, broadcastPlayerInfo);
         }
-        public List<MarsPeer> BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
+        public List<MarsPeerOld> BroastPlayerSomething(long accountId, bool isContain, BroadcastPlayerInfo broadcastPlayerInfo)
         {
-            List<MarsPeer> peers = new List<MarsPeer>();
-            foreach (MarsPeer peer in allusers)
+            List<MarsPeerOld> peers = new List<MarsPeerOld>();
+            foreach (MarsPeerOld peer in allusers)
             {
                 if (peer.accountId == accountId && isContain == false) continue;
                 if (broadcastPlayerInfo != null)
@@ -88,7 +88,7 @@ namespace MarsServer
         public List<Role> GetAllListRoleBeSideMe (long accountId)
         {
             List<Role> roles = new List<Role>();
-            foreach (MarsPeer peer in allusers)
+            foreach (MarsPeerOld peer in allusers)
             {
                 if (peer.accountId == accountId) continue;
                 Role r = peer.role;

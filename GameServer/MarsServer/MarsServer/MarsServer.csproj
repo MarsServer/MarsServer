@@ -76,12 +76,13 @@
     <Compile Include="Data\SQLiteVer.cs" />
     <Compile Include="Data\Team.cs" />
     <Compile Include="DebugLog\Debug.cs" />
-    <Compile Include="Fight\FightConstants.cs" />
-    <Compile Include="Fight\FightManager.cs" />
+    <Compile Include="MarsPeer.cs" />
+    <Compile Include="PlayersOld\Fight\FightConstants.cs" />
+    <Compile Include="PlayersOld\Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />
     <Compile Include="LoginServer\LoginServer.cs" />
     <Compile Include="MarsApplication.cs" />
-    <Compile Include="MarsPeer.cs" />
+    <Compile Include="PlayersOld\MarsPeerOld.cs" />
     <Compile Include="Message\ServerSetup.cs" />
     <Compile Include="MySQL\DBUtility.cs" />
     <Compile Include="MySQL\MySql_Operator\ExpMySQL.cs" />
@@ -89,7 +90,7 @@
     <Compile Include="MySQL\MySql_Operator\RoleMySQL.cs" />
     <Compile Include="MySQL\SQLCommon.cs" />
     <Compile Include="MySQL\SQLConstants.cs" />
-    <Compile Include="Players\PlayersManager.cs" />
+    <Compile Include="PlayersOld\PlayersManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room\RoomConstants.cs" />
     <Compile Include="Room\RoomManager.cs" />

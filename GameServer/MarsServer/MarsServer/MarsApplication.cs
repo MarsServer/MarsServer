@@ -12,7 +12,7 @@ namespace MarsServer
     {
         protected override PeerBase CreatePeer(InitRequest initRequest)
         {
-            return new MarsPeer (initRequest.Protocol, initRequest.PhotonPeer);
+            return new MarsPeerOld (initRequest.Protocol, initRequest.PhotonPeer);
         }
 
         protected override void Setup()
