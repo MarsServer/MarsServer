@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\ActorCollection.cs" />
+    <Compile Include="Constants\Constants.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Bundle.cs" />
     <Compile Include="Data\Command.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />
     <Compile Include="PlayersOld\Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />
-    <Compile Include="LoginServer\LoginServer.cs" />
     <Compile Include="MarsApplication.cs" />
     <Compile Include="PlayersOld\MarsPeerOld.cs" />
     <Compile Include="Message\ServerSetup.cs" />

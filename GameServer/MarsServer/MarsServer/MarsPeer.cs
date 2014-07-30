@@ -10,9 +10,21 @@ namespace MarsServer
 {
     public class MarsPeer : PeerBase
     {
-        public long accountId;
-        public long roleId;
+        #region property
+        public long accountId { get; private set; }
+        public long roleId { get; private set; }
+        public Role role { get { if (roleId == 0) return null; return RoleMySQL.instance.getRoleByRoleId(roleId); } }
 
+        /// <summary>
+        /// region is that player now in which region. 0-publiczone, roomId-other
+        /// </summary>
+        public int region { get; private set; }
+        public float x { get; private set; }
+        public float z { get; private set; }
+        public float xRo { get; private set; }
+        public float zRo { get; private set; }
+        public int acion { get; private set; }
+        #endregion
 
         #region constructor And HandshakeHandle
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
@@ -29,6 +41,7 @@ namespace MarsServer
          }
         #endregion
 
+        #region Photon API
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
             ActorCollection.Instance.HandleDisconnect(accountId);
@@ -40,18 +53,22 @@ namespace MarsServer
         {
             byte key = operationRequest.OperationCode;//client's key
             Command cmd = (Command)key;//convert to Command
-            string getClientJson = null;//is client's json.
+            string json = null;//is client's json.
             Bundle bundle = null;//this will be send to client's data
             if (operationRequest.Parameters != null && operationRequest.Parameters.Count > 0)
             {
-                getClientJson = operationRequest.Parameters[key].ToString ();
+                json = operationRequest.Parameters[key].ToString ();
             }
             switch (cmd)
             {
                 case Command.ServerSelect:
-                    bundle = HandleServerSelectOnOperation(getClientJson, cmd);
+                    bundle = HandleServerSelectOnOperation(json, cmd);
                     break;
                 case Command.CreatRole:
+                    bundle = HandleCreatRoleOnOperation(json, cmd);
+                    break;
+                case Command.EnterGame:
+                    bundle = HandleEnterGameOnOperation(json, cmd);
                     break;
             }
 
@@ -61,6 +78,7 @@ namespace MarsServer
                 SendClientEvent(bundle);
             }
         }
+        #endregion
 
         #region HandleServerSelectOnOperation
         Bundle HandleServerSelectOnOperation(string json, Command cmd)
@@ -70,8 +88,7 @@ namespace MarsServer
 
             accountId = server.accountId;
 
-            long id = 0;
-            bool isLogined = ActorCollection.Instance.HandleRoleLogin(accountId, this);
+            bool isLogined = ActorCollection.Instance.HandleAccountLogin(accountId, this);
             if (isLogined == false)
             {
                 bundle.error = new Error();
@@ -85,6 +102,70 @@ namespace MarsServer
         }
         #endregion
 
+        #region HandleEnterGameOnOperation
+        Bundle HandleEnterGameOnOperation(string json, Command cmd)
+        {
+            Role role = JsonConvert.DeserializeObject<Role>(json);
+            Bundle bundle = new Bundle();
+
+            //Self's role
+            roleId = role.roleId;
+            Role newRole = RoleMySQL.instance.getRoleByRoleId(roleId);
+            if (newRole != null)
+            {
+                region = Constants.PUBLICZONE;
+                newRole.region = region;
+                bundle.onlineRoles = ActorCollection.Instance.HandleRoleListOnline((MarsPeer peer) =>
+                    {
+                        return peer.accountId == accountId || peer.region != region;
+                    });
+                bundle.role = newRole;
+            }
+            //get all online peers, in public region
+            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            {
+                return peer.accountId == accountId || peer.region != region;
+            });
+            //new Role
+            if (peers.Count >= 0)
+            {
+                Role mRole = new Role();
+                mRole.roleId = newRole.roleId;
+                mRole.profession = newRole.profession;
+                Bundle mBundle = new Bundle();
+                mBundle.role = mRole;
+                BroadCastEvent(peers, mBundle);
+            }
+
+            return bundle;
+        }
+        #endregion
+
+        #region HandleCreatRoleOnOperation
+        Bundle HandleCreatRoleOnOperation(string json, Command cmd)
+        {
+            Role role = JsonConvert.DeserializeObject<Role>(json);
+            Bundle bundle = new Bundle();
+
+            role.accountId = accountId;
+
+            string msg = RoleMySQL.instance.CreatRole(role);
+            long id = 0;
+            bool isSuccess = long.TryParse(msg, out id);
+            if (isSuccess)
+            {
+                role.roleId = id;
+                bundle.role = role;
+            }
+            else
+            {
+                bundle.error = new Error();
+                bundle.error.message = NetError.ROLR_CREAT_ERROR;
+            }
+
+            return bundle;
+        }
+        #endregion
 
         #region Link Client Event
         public void SendClientEvent(Bundle bundle)
@@ -93,12 +174,12 @@ namespace MarsServer
             SendOperationResponse(response, new SendParameters());
         }
 
-        public void BroadCastEvent(List<MarsPeerOld> peers, Bundle bundle)
+        public void BroadCastEvent(List<MarsPeer> peers, Bundle bundle)
         {
             if (peers.Count > 0 && bundle != null)
             {
                 EventData eventData = new EventData((byte)bundle.cmd, GetParameter(bundle));
-                ApplicationBase.Instance.BroadCastEvent<MarsPeerOld>(eventData, peers, new SendParameters());
+                ApplicationBase.Instance.BroadCastEvent<MarsPeer>(eventData, peers, new SendParameters());
             }
         }
 
