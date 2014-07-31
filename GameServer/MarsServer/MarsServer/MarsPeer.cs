@@ -217,23 +217,10 @@ namespace MarsServer
         {
             Message message = JsonConvert.DeserializeObject<Message>(json);
             Bundle bundle = new Bundle();
-
             //boastcast message
             bundle.message = message;
+            MessageManager.instance.OnOperationRequest(bundle, this);
 
-            List<MarsPeer> peers = new List<MarsPeer>();
-            if (message.chatType == ChatType.World)
-            {
-                //get all online peers, in Game beside select role
-                peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
-                {
-                    return peer.accountId == accountId || peer.region != 0;////account is self, or region not be zero, don't add list Peer
-                });
-            }
-            if (peers.Count > 0)
-            {
-                BroadCastEvent(peers, bundle);
-            }
         }
         #endregion
 
@@ -244,7 +231,13 @@ namespace MarsServer
             SendOperationResponse(response, new SendParameters());
         }
 
-        public void BroadCastEvent(List<MarsPeer> peers, Bundle bundle)
+
+        /// <summary>
+        /// Broad all peers's pos
+        /// </summary>
+        /// <param name="peers"></param>
+        /// <param name="bundle"></param>
+        public static void BroadCastEvent(List<MarsPeer> peers, Bundle bundle)
         {
             if (peers.Count > 0 && bundle != null)
             {
@@ -253,7 +246,7 @@ namespace MarsServer
             }
         }
 
-        private Dictionary<byte, object> GetParameter(Bundle bundle)
+        private static Dictionary<byte, object> GetParameter(Bundle bundle)
         {
             string json = JsonConvert.SerializeObject(bundle);
             Dictionary<byte, object> parameter = new Dictionary<byte, object>();

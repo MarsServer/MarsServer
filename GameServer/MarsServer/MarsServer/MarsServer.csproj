@@ -79,12 +79,12 @@
     <Compile Include="Data\Team.cs" />
     <Compile Include="DebugLog\Debug.cs" />
     <Compile Include="MarsPeer.cs" />
+    <Compile Include="Message\MessageManager.cs" />
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />
     <Compile Include="PlayersOld\Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />
     <Compile Include="MarsApplication.cs" />
     <Compile Include="PlayersOld\MarsPeerOld.cs" />
-    <Compile Include="Message\ServerSetup.cs" />
     <Compile Include="MySQL\DBUtility.cs" />
     <Compile Include="MySQL\MySql_Operator\ExpMySQL.cs" />
     <Compile Include="MySQL\MySql_Operator\Property.cs" />
