@@ -49,8 +49,9 @@ namespace MarsServer
             else
             {
                 Debug.Log("getPeer.Connected = " + getPeer.Connected);
-
+                getPeer.Disconnect();
                 getPeer.Dispose();
+                getPeer = null;
                 return false;
             }
         }

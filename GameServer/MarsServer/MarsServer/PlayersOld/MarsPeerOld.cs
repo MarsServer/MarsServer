@@ -352,14 +352,14 @@ namespace MarsServer
                 FightManager.instance.ModifyTeamInfo(teamInfo);
                 //teamInfo.team.fightId = fight.id;
                 role.region = (int)fight.id;
-                for (int i = 0; i < teamInfo.team.roles.Count; i++)
+                /*for (int i = 0; i < teamInfo.team.roles.Count; i++)
                 {
                     if (teamInfo.team.roles[i].roleId == role.roleId)
                     {
                         teamInfo.team.roles[i].region = (int)fight.id;
                         break;
                     }
-                }
+                }*/
                 bundle.fight.team = teamInfo.team;
                 FightManager.instance.ModifyTeamInfo(teamInfo);
                 if (teamInfo.teamId == role.roleId)

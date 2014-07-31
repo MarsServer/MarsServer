@@ -1,4 +1,5 @@
-﻿using Photon.SocketServer;
+﻿using ExitGames.Concurrency.Fibers;
+using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,9 @@ namespace MarsServer
     public class MarsPeer : PeerBase
     {
         #region property
+
+        //private readonly IFiber fiber;
+
         public long accountId { get; private set; }
         public long roleId { get; private set; }
         public Role role { get { if (roleId == 0) return null; return RoleMySQL.instance.getRoleByRoleId(roleId); } }
@@ -30,6 +34,9 @@ namespace MarsServer
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
             : base(rpc, peer)
         {
+            //this.fiber = new PoolFiber();
+            //this.fiber.Start();
+
             HandshakeHandle();
         }
 

@@ -9,5 +9,7 @@ public class Team
     [DefaultValue(0L)]
     public long fightId;
     [DefaultValue(null)]
-    public List<Role> roles;
+    public string teamName;
+    [DefaultValue(null)]
+    public List<long> roleIds;
 }

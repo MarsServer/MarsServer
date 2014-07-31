@@ -42,8 +42,8 @@ namespace MarsServer
             {
                 fbInfo.team = new Team();
                 fbInfo.team.teamId = fbInfo.teamId;
-                fbInfo.team.roles = new List<Role>();
-                fbInfo.team.roles.Add(peer.role);
+                //fbInfo.team.roles = new List<Role>();
+                //fbInfo.team.roles.Add(peer.role);
                 
 
                 infos.Add(fbInfo.teamId, fbInfo);
@@ -71,7 +71,7 @@ namespace MarsServer
                     role.roleName = peer.role.roleName;
                     role.profession = peer.role.profession;
                     role.level = peer.role.level;
-                    fbInfo.team.roles.Add(role);
+                   // fbInfo.team.roles.Add(role);
                     return fbInfo;
                 }
             }
@@ -95,9 +95,9 @@ namespace MarsServer
                 {
                     if (fbInfo.peers[i].role.roleId == peer.role.roleId)
                     {
-                        fbInfo.team.roles.Remove(peer.role);
+                        //fbInfo.team.roles.Remove(peer.role);
                         fbInfo.peers.Remove(peer);
-                        Debug.Log(fbInfo.team.roles.Count + "_____" + fbInfo.peers);
+                        //Debug.Log(fbInfo.team.roles.Count + "_____" + fbInfo.peers);
                         return peer.role;
                     }
                 }
