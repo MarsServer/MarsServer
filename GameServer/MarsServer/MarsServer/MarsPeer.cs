@@ -26,19 +26,32 @@ namespace MarsServer
         public int acion { get; private set; }
         #endregion
 
-        #region constructor And HandshakeHandle
+        #region constructor & HandshakeHandle & ClearData
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
             : base(rpc, peer)
         {
             HandshakeHandle();
         }
 
-         public void HandshakeHandle()
+         private void HandshakeHandle()
          {
              Bundle bundle = new Bundle();
              bundle.cmd = Command.LinkServer;
              SendClientEvent(bundle);
          }
+
+         private void ClearData()//Switch role clear data
+         {
+             //accountId = 0;
+             roleId = 0;
+             region = 0;
+             x = 0;
+             z = 0;
+             xRo = 0;
+             zRo = 0;
+             acion = 0;
+         }
+
         #endregion
 
         #region Photon API
@@ -72,6 +85,9 @@ namespace MarsServer
                     break;
                 case Command.UpdatePlayer:
                     HandleUpdatePlayerOnOperation(json, cmd);
+                    return;
+                case Command.SendChat:
+                    HandleSendChatOperation(json, cmd);
                     return;
             }
 
@@ -146,14 +162,14 @@ namespace MarsServer
                 newRole.region = region;
                 bundle.onlineRoles = ActorCollection.Instance.HandleRoleListOnline((MarsPeer peer) =>
                     {
-                        return peer.accountId == accountId || peer.region != region;
+                        return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
                     });
                 bundle.role = newRole;
             }
             //get all online peers, in public region
             List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
             {
-                return peer.accountId == accountId || peer.region != region;
+                return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
             });
             //new Role
             if (peers.Count >= 0)
@@ -184,13 +200,38 @@ namespace MarsServer
             //get all online peers, in public region
             List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
             {
-                return peer.accountId == accountId || peer.region != region;
+                return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
             });
             if (peers.Count >= 0)
             {
                 Bundle bundle = new Bundle();
                 bundle.role = mRole;
                 bundle.cmd = Command.UpdatePlayer;
+                BroadCastEvent(peers, bundle);
+            }
+        }
+        #endregion
+
+        #region HandleSendChatOperation
+        void HandleSendChatOperation(string json, Command cmd)
+        {
+            Message message = JsonConvert.DeserializeObject<Message>(json);
+            Bundle bundle = new Bundle();
+
+            //boastcast message
+            bundle.message = message;
+
+            List<MarsPeer> peers = new List<MarsPeer>();
+            if (message.chatType == ChatType.World)
+            {
+                //get all online peers, in Game beside select role
+                peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+                {
+                    return peer.accountId == accountId || peer.region != 0;////account is self, or region not be zero, don't add list Peer
+                });
+            }
+            if (peers.Count > 0)
+            {
                 BroadCastEvent(peers, bundle);
             }
         }
