@@ -10,12 +10,7 @@ namespace MarsServer
     {
         public readonly static Actor Instance = new Actor();
 
-
-        private Dictionary<long, MarsPeer> allUserByAccountId = new Dictionary<long, MarsPeer>();//key is accountId;
-        private List<long> accountIds = new List<long>();//all accountIds;
-
-        public delegate bool HandlePeerListLimit(MarsPeer peer);
-        public delegate bool HandleRoleListLimit(Role peer);
+        public ActorCollection Actors = new ActorCollection();
 
         /// <summary>
         /// Size for debug
@@ -24,12 +19,9 @@ namespace MarsServer
         {
             get 
             {
-                return allUserByAccountId.Count + "/" + accountIds.Count;
+                return "*******/" + Actors.Count;//NEW TODO:
             }
         }
-        /*private Dictionary<long, MarsPeer> allUserByRoleId = new Dictionary<long, MarsPeer>();//key is roleId;
-        private Dictionary<string, MarsPeer> allUserByRoleName = new Dictionary<string, MarsPeer>();//key is roleName*/
-
         
         /// <summary>
         /// add a peer by accountid
@@ -40,15 +32,15 @@ namespace MarsServer
         public bool HandleAccountLogin(long accountId, MarsPeer peer)
         {
             MarsPeer getPeer = null;
-            if (allUserByAccountId.TryGetValue(accountId, out getPeer) == false)
+            //if ( .TryGetValue(accountId, out getPeer) == false)
+            if (Actors.TryGetValue (accountId, out getPeer) == false)
             {
-                allUserByAccountId.Add(accountId, peer);
-                accountIds.Add(accountId);
+                Actors.Add(peer);//NEW TODO:
+                Debug.Log("Start..................................." + Size);
                 return true;
             }
             else
             {
-                Debug.Log("getPeer.Connected = " + getPeer.Connected);
                 getPeer.Disconnect();
                 getPeer.Dispose();
                 getPeer = null;
@@ -60,114 +52,39 @@ namespace MarsServer
         /// Remove a peer by accountid
         /// </summary>
         /// <param name="accountId"></param>
-        public void HandleDisconnect(long accountId)
+        public void HandleDisconnect(MarsPeer peer)
         {
-            allUserByAccountId.Remove(accountId);
-            accountIds.Remove(accountId);
-        }
-
-        /// <summary>
-        /// return is BOOL by handlePeerListLimit
-        /// BOOL is true, not add List, e.g it is self, or diff region
-        /// else is add the list
-        /// </summary>
-        /// <param name="handlePeerListLimit"></param>
-        /// <returns></returns>
-        public List<MarsPeer> HandleAccountListOnline(HandlePeerListLimit handlePeerListLimit)
-        {
-            bool isAllAdd = (handlePeerListLimit == null);
-            List<MarsPeer> peers = new List<MarsPeer>();
-            for (int i = 0; i < accountIds.Count; i++ )
-            {
-                MarsPeer peer = allUserByAccountId[accountIds[i]];
-                if (peer == null) continue;
-                if (isAllAdd == false)
-                {
-                    if (handlePeerListLimit(peer) == true)
-                    {
-                        continue;
-                    }
-                }
-                peers.Add(peer);
-            }
-            return peers;
+            Actors.Remove(peer);//NEW TODO:
         }
 
         /// <summary>
         /// Get beside me all peers
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="peer"></param>
         /// <returns></returns>
-        public List<MarsPeer> HandleAccountListOnlineByOthers(MarsPeer p)
+        public List<MarsPeer> HandleAccountListOnlineByOthers(MarsPeer peer)
         {
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnline((MarsPeer peer) =>
-            {
-                return peer.accountId == p.accountId || peer.region == 0;////account is self, or region not be zero, don't add list Peer
-            });
-            return peers;
+            return Actors.GetPeersByOthers(peer); ;
         }
 
         /// <summary>
         /// Get the same region all peers beside self
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="peer"></param>
         /// <returns></returns>
-        public List<MarsPeer> HandleAccountListOnlineBySamePos(MarsPeer p)
+        public List<MarsPeer> HandleAccountListOnlineBySamePos(MarsPeer peer)
         {
-            //get all online peers, in public region
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnline((MarsPeer peer) =>
-            {
-                return peer.accountId == p.accountId || peer.region != p.region;////account is self, or not in same pos, don't add list Peer
-            });
-            return peers;
+            return Actors.GetPeersBySamePos (peer);
         }
-
-        /// <summary>
-        /// return is BOOL by handleRoleListLimit
-        /// BOOL is true, not add List, e.g it is self, or diff region
-        /// else is add the list
-        /// </summary>
-        /// <param name="handleRoleListLimit"></param>
-        /// <returns></returns>
-        public List<Role> HandleRoleListOnline(HandlePeerListLimit handlePeerListLimit)
-        {
-            bool isAllAdd = (handlePeerListLimit == null);
-            List<Role> roles = new List<Role>();
-            for (int i = 0; i < accountIds.Count; i++)
-            {
-                MarsPeer peer = allUserByAccountId[accountIds[i]];
-                if (peer == null) continue;
-                Role role = peer.role;
-                if (role == null) continue;
-                if (isAllAdd == false)
-                {
-                    if (handlePeerListLimit(peer) == true)
-                    {
-                        continue;
-                    }
-                }
-                role.x = peer.x;
-                role.z = peer.z;
-                role.xRo = peer.xRo;
-                role.zRo = peer.zRo;
-                roles.Add(role);
-            }
-            return roles;
-        }
-
+        
         /// <summary>
         /// get same region's roles
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="peer"></param>
         /// <returns></returns>
-        public List<Role> HandleRoleListOnlineBySamePos(MarsPeer p)
+        public List<Role> HandleRoleListOnlineBySamePos(MarsPeer peer)
         {
-            List<Role> roles = Actor.Instance.HandleRoleListOnline((MarsPeer peer) =>
-            {
-                return peer.accountId == p.accountId || peer.region != p.region;//account is self, or not in same pos, don't add list Peer
-            }); ;
-            
-            return roles;
+            return Actors.GetRolesBySamePos (peer);
         }
     }
 }

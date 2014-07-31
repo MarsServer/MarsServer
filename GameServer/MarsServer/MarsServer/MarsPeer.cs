@@ -64,8 +64,9 @@ namespace MarsServer
         #region Photon API
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
+            Debug.Log("1111111111111111111111111: " + string.Format("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
             HandleDisconnectOperation();
-            Debug.Log(string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
+            Debug.Log("2222222222222222222222222: " + string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
             //this.Dispose();
         }
 
@@ -255,7 +256,7 @@ namespace MarsServer
                     BroadCastEvent(peers, bundle);
                 }
             }
-            Actor.Instance.HandleDisconnect(accountId);
+            Actor.Instance.HandleDisconnect(this);
             ClearData();
         }
         #endregion

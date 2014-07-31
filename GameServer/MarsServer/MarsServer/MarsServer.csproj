@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\Actor.cs" />
+    <Compile Include="Actors\ActorCollection.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Bundle.cs" />
