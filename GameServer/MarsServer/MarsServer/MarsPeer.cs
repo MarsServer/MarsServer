@@ -89,6 +89,9 @@ namespace MarsServer
                 case Command.SendChat:
                     HandleSendChatOperation(json, cmd);
                     return;
+                case Command.CreatTeam:
+                    bundle = HandleCreatTeamOperation(json, cmd);
+                    break;
             }
 
             if (bundle != null)
@@ -247,6 +250,17 @@ namespace MarsServer
             }
             ActorCollection.Instance.HandleDisconnect(accountId);
             ClearData();
+        }
+        #endregion
+
+        #region HandleCreatTeamOperation
+        Bundle HandleCreatTeamOperation(string json, Command cmd)
+        {
+            Role role = JsonConvert.DeserializeObject<Role>(json);
+            Bundle bundle = new Bundle();
+
+
+            return bundle;
         }
         #endregion
 
