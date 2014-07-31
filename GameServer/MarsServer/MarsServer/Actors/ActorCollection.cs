@@ -92,6 +92,34 @@ namespace MarsServer
             return peers;
         }
 
+        /// <summary>
+        /// Get beside me all peers
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public List<MarsPeer> HandleAccountListOnlineByOthers(MarsPeer p)
+        {
+            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            {
+                return peer.accountId == p.accountId || peer.region == 0;////account is self, or region not be zero, don't add list Peer
+            });
+            return peers;
+        }
+
+        /// <summary>
+        /// Get the same region all peers beside self
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public List<MarsPeer> HandleAccountListOnlineBySamePos(MarsPeer p)
+        {
+            //get all online peers, in public region
+            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            {
+                return peer.accountId == p.accountId || peer.region != p.region;////account is self, or not in same pos, don't add list Peer
+            });
+            return peers;
+        }
 
         /// <summary>
         /// return is BOOL by handleRoleListLimit
@@ -123,6 +151,21 @@ namespace MarsServer
                 role.zRo = peer.zRo;
                 roles.Add(role);
             }
+            return roles;
+        }
+
+        /// <summary>
+        /// get same region's roles
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public List<Role> HandleRoleListOnlineBySamePos(MarsPeer p)
+        {
+            List<Role> roles = ActorCollection.Instance.HandleRoleListOnline((MarsPeer peer) =>
+            {
+                return peer.accountId == p.accountId || peer.region != p.region;//account is self, or not in same pos, don't add list Peer
+            }); ;
+            
             return roles;
         }
     }

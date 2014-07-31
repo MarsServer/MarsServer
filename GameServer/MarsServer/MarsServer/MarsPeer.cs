@@ -57,7 +57,7 @@ namespace MarsServer
         #region Photon API
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
-            ActorCollection.Instance.HandleDisconnect(accountId);
+            HandleDisconnectOperation();
             Debug.Log(string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, ActorCollection.Instance.Size));
             //this.Dispose();
         }
@@ -160,22 +160,23 @@ namespace MarsServer
             {
                 region = Constants.PUBLICZONE;
                 newRole.region = region;
-                bundle.onlineRoles = ActorCollection.Instance.HandleRoleListOnline((MarsPeer peer) =>
+                bundle.onlineRoles = ActorCollection.Instance.HandleRoleListOnlineBySamePos (this);/*.HandleRoleListOnline((MarsPeer peer) =>
                     {
                         return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
-                    });
+                    });*/
                 bundle.role = newRole;
             }
             //get all online peers, in public region
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
-            });
+            });*/
             //new Role
             if (peers.Count >= 0)
             {
                 Role mRole = new Role();
                 mRole.roleId = newRole.roleId;
+                mRole.roleName = newRole.roleName;
                 mRole.profession = newRole.profession;
                 Bundle mBundle = new Bundle();
                 mBundle.cmd = Command.AddNewPlayer;                   
@@ -198,10 +199,10 @@ namespace MarsServer
             acion = mRole.action;
             
             //get all online peers, in public region
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
-            });
+            });*/
             if (peers.Count >= 0)
             {
                 Bundle bundle = new Bundle();
@@ -218,9 +219,34 @@ namespace MarsServer
             Message message = JsonConvert.DeserializeObject<Message>(json);
             Bundle bundle = new Bundle();
             //boastcast message
+            bundle.cmd = Command.SendChat;
             bundle.message = message;
             MessageManager.instance.OnOperationRequest(bundle, this);
 
+        }
+        #endregion
+
+        #region HandleDisconnectOperation
+        void HandleDisconnectOperation()
+        {
+            if (roleId != 0)
+            {
+                //get all online peers, in same region
+                List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+                {
+                    return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
+                });*/
+                if (peers.Count > 0)
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.cmd = Command.DestroyPlayer;
+                    bundle.role = new Role();
+                    bundle.role.roleId = roleId;
+                    BroadCastEvent(peers, bundle);
+                }
+            }
+            ActorCollection.Instance.HandleDisconnect(accountId);
+            ClearData();
         }
         #endregion
 
