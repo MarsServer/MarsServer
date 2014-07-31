@@ -65,7 +65,7 @@ namespace MarsServer
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
             HandleDisconnectOperation();
-            Debug.Log(string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, ActorCollection.Instance.Size));
+            Debug.Log(string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
             //this.Dispose();
         }
 
@@ -117,7 +117,7 @@ namespace MarsServer
 
             accountId = server.accountId;
 
-            bool isLogined = ActorCollection.Instance.HandleAccountLogin(accountId, this);
+            bool isLogined = Actor.Instance.HandleAccountLogin(accountId, this);
             if (isLogined == false)
             {
                 bundle.error = new Error();
@@ -170,14 +170,14 @@ namespace MarsServer
             {
                 region = Constants.PUBLICZONE;
                 newRole.region = region;
-                bundle.onlineRoles = ActorCollection.Instance.HandleRoleListOnlineBySamePos (this);/*.HandleRoleListOnline((MarsPeer peer) =>
+                bundle.onlineRoles = Actor.Instance.HandleRoleListOnlineBySamePos (this);/*.HandleRoleListOnline((MarsPeer peer) =>
                     {
                         return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
                     });*/
                 bundle.role = newRole;
             }
             //get all online peers, in public region
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
             });*/
@@ -209,7 +209,7 @@ namespace MarsServer
             acion = mRole.action;
             
             //get all online peers, in public region
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
             });*/
@@ -242,7 +242,7 @@ namespace MarsServer
             if (roleId != 0)
             {
                 //get all online peers, in same region
-                List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+                List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
                 {
                     return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
                 });*/
@@ -255,7 +255,7 @@ namespace MarsServer
                     BroadCastEvent(peers, bundle);
                 }
             }
-            ActorCollection.Instance.HandleDisconnect(accountId);
+            Actor.Instance.HandleDisconnect(accountId);
             ClearData();
         }
         #endregion

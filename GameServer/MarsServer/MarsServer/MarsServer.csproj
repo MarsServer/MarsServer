@@ -62,7 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actors\ActorCollection.cs" />
+    <Compile Include="Actors\Actor.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Bundle.cs" />

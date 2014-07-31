@@ -19,7 +19,7 @@ namespace MarsServer
             {
                 //world chat.....
                 //get all online peers, in Game beside select role
-                peers = ActorCollection.Instance.HandleAccountListOnlineByOthers(p);
+                peers = Actor.Instance.HandleAccountListOnlineByOthers(p);
             }
             if (peers.Count > 0)
             {

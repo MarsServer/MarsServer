@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    public class ActorCollection
+    public class Actor
     {
-        public readonly static ActorCollection Instance = new ActorCollection();
+        public readonly static Actor Instance = new Actor();
 
 
         private Dictionary<long, MarsPeer> allUserByAccountId = new Dictionary<long, MarsPeer>();//key is accountId;
@@ -100,7 +100,7 @@ namespace MarsServer
         /// <returns></returns>
         public List<MarsPeer> HandleAccountListOnlineByOthers(MarsPeer p)
         {
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == p.accountId || peer.region == 0;////account is self, or region not be zero, don't add list Peer
             });
@@ -115,7 +115,7 @@ namespace MarsServer
         public List<MarsPeer> HandleAccountListOnlineBySamePos(MarsPeer p)
         {
             //get all online peers, in public region
-            List<MarsPeer> peers = ActorCollection.Instance.HandleAccountListOnline((MarsPeer peer) =>
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == p.accountId || peer.region != p.region;////account is self, or not in same pos, don't add list Peer
             });
@@ -162,7 +162,7 @@ namespace MarsServer
         /// <returns></returns>
         public List<Role> HandleRoleListOnlineBySamePos(MarsPeer p)
         {
-            List<Role> roles = ActorCollection.Instance.HandleRoleListOnline((MarsPeer peer) =>
+            List<Role> roles = Actor.Instance.HandleRoleListOnline((MarsPeer peer) =>
             {
                 return peer.accountId == p.accountId || peer.region != p.region;//account is self, or not in same pos, don't add list Peer
             }); ;
