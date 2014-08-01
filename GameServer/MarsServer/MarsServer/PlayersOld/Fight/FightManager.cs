@@ -52,7 +52,7 @@ namespace MarsServer
             }
             catch (System.Exception e)
             {
-                //Debug.Log(e);
+                Debug.Log(e);
             }
             return null;
         }

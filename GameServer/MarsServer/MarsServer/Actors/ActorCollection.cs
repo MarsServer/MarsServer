@@ -61,7 +61,7 @@ namespace MarsServer
             List<Role> roles = new List<Role>();
             foreach (MarsPeer for_peer in myPeersList)
             {
-                Role role = for_peer.role;
+                Role role = for_peer.Role;
                 if (role == null) continue;
                 role.x = for_peer.x;
                 role.z = for_peer.z;

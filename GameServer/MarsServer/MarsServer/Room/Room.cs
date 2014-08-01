@@ -12,21 +12,30 @@ namespace MarsServer
     /// </summary>
     public class Room
     {
+        public static long MinTeamID = 100;
+
+        /// <summary>
+        /// use for BroadcastEvent
+        /// </summary>
         public enum BroadcastType
         {
-            Chat = 0,
+            Notice = 0,
             Region = 1,
         }
 
 
         private RoomCollection Rooms = new RoomCollection();
+        public int Size
+        {
+            get
+            {
+                return Rooms.Count;
+            }
+        }
 
         protected object SyncRoot = new object();
 
-        public Team GetTeamById(string id, MarsPeer peer)//get key
-        {
-            return GetTeamById(id, null, peer);
-        }
+       
         /// <summary>
         /// !!!!!!!!!
         /// id is team's id
@@ -39,17 +48,18 @@ namespace MarsServer
         /// <returns></returns>
         public virtual Team GetTeamById(string id, string name, MarsPeer peer)//creat new......
         {
-            Team team = null;
+            Team team = null;//
             lock (this.SyncRoot)
             {
-                if (Rooms.TryGetValue(id, out team) == false)
+                if (id == null || Rooms.TryGetValue(id, out team) == false)
                 {
                     if (name != null)
                     {
                         team = new Team();
-                        team.teamId = Guid.NewGuid().ToString();
+                        team.teamId = (MinTeamID++).ToString();//Guid.NewGuid().ToString();
                         team.teamName = name;
                         team.peers = new List<MarsPeer>();
+                        Rooms.Add(team.teamId, team);
                     }
                 }
                 if (team.peers.Contains(peer) == false)
@@ -81,8 +91,12 @@ namespace MarsServer
                 Team team = null;
                 if (Rooms.TryGetValue(peer.team.teamId, out team) == true)
                 {
-                    role = peer.role;
+                    role = peer.Role;
                     team.peers.Remove(peer);
+                    if (team.peers.Count == 0)
+                    {
+                        RemoveTeam(peer.team.teamId);
+                    }
                 }
             }
             return role;
@@ -104,7 +118,7 @@ namespace MarsServer
         /// </summary>
         /// <param name="peer"></param>
         /// <param name="bundle"></param>
-        public void BroadcastEvent(MarsPeer peer, Bundle bundle, BroadcastType broadcastType = BroadcastType.Chat)
+        public void BroadcastEvent(MarsPeer peer, Bundle bundle, BroadcastType broadcastType = BroadcastType.Notice)
         {
             Team team = null;
             List<MarsPeer> peerList = new List<MarsPeer>();

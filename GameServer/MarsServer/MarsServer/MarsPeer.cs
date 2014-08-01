@@ -17,7 +17,19 @@ namespace MarsServer
 
         public long accountId { get; private set; }
         public long roleId { get; private set; }
-        public Role role { get { if (roleId == 0) return null; return RoleMySQL.instance.getRoleByRoleId(roleId); } }
+
+        private Role role;
+        public Role Role 
+        {
+            get
+            { 
+                if (roleId == 0)
+                    return null; 
+                if (role == null)
+                    role = RoleMySQL.instance.getRoleByRoleId(roleId);
+                return role; 
+            }
+        }
 
         /// <summary>
         /// region is that player now in which region. 0-publiczone, roomId-other
@@ -62,6 +74,7 @@ namespace MarsServer
              xRo = 0;
              zRo = 0;
              acion = 0;
+             team = null;
          }
 
         #endregion
@@ -69,9 +82,9 @@ namespace MarsServer
         #region Photon API
         protected override void OnDisconnect(PhotonHostRuntimeInterfaces.DisconnectReason reasonCode, string reasonDetail)
         {
-            Debug.Log("1111111111111111111111111: " + string.Format("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
+            Debug.Log("1111111111111111111111111: " + string.Format("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, playerscount = {3}, teamscount = {4}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size, RoomInstance.instance.Size));
             HandleDisconnectOperation();
-            Debug.Log("2222222222222222222222222: " + string.Format ("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, count = {3}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size));
+            Debug.Log("2222222222222222222222222: " + string.Format("OnDisconnect: conId={0}, reason={1}, reasonDetail={2}, playerscount = {3}, teamscount = {4}", ConnectionId, reasonCode, reasonDetail, Actor.Instance.Size, RoomInstance.instance.Size));
             //this.Dispose();
         }
 
@@ -175,18 +188,11 @@ namespace MarsServer
             if (newRole != null)
             {
                 region = Constants.PUBLICZONE;
-                newRole.region = region;
-                bundle.onlineRoles = Actor.Instance.HandleRoleListOnlineBySamePos (this);/*.HandleRoleListOnline((MarsPeer peer) =>
-                    {
-                        return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
-                    });*/
+                bundle.onlineRoles = Actor.Instance.HandleRoleListOnlineBySamePos (this);
                 bundle.role = newRole;
             }
             //get all online peers, in public region
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
-            {
-                return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
-            });*/
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);
             //new Role
             if (peers.Count >= 0)
             {
@@ -245,7 +251,7 @@ namespace MarsServer
         #region HandleDisconnectOperation
         void HandleDisconnectOperation()
         {
-            if (roleId != 0)
+            if (Role != null)
             {
                 //get all online peers, in same region
                 List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
@@ -260,6 +266,11 @@ namespace MarsServer
                     bundle.role.roleId = roleId;
                     BroadCastEvent(peers, bundle);
                 }
+
+                if (team != null)
+                {
+                    RoomInstance.instance.LeaveTeamRole(this);
+                }
             }
             Actor.Instance.HandleDisconnect(this);
             ClearData();
@@ -269,10 +280,33 @@ namespace MarsServer
         #region HandleJoinTeamOperation
         Bundle HandleJoinTeamOperation(string json, Command cmd)
         {
-            Role role = JsonConvert.DeserializeObject<Role>(json);
+            Team g_team = JsonConvert.DeserializeObject<Team>(json);
             Bundle bundle = new Bundle();
 
+            //Team id.......
+            Team m_team = RoomInstance.instance.GetTeamById(g_team.teamId, g_team.teamName, this);
+            this.team = m_team;
 
+            Team s_team = new Team();
+            s_team.teamId = team.teamId;
+            s_team.teamName = team.teamName;
+            s_team.roles = new List<Role>();
+            foreach (MarsPeer for_p in team.peers)
+            {
+                Role s_role = new Role();
+                s_role.roleId = for_p.roleId;
+                s_role.roleName = for_p.Role.roleName;
+                s_role.profession = for_p.Role.profession;
+                s_role.level = for_p.Role.level;
+                s_team.roles.Add(s_role);
+            }
+            bundle.team = s_team;
+
+            bundle.cmd = cmd;
+            //send others
+            RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Notice);
+
+            //Send self
             return bundle;
         }
         #endregion
