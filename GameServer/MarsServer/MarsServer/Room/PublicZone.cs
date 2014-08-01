@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarsServer
 {
-    public class RoomCollection : Dictionary<string, Team>
+    public class PublicZone : Room
     {
-
+        public static readonly PublicZone instance = new PublicZone();
     }
 }

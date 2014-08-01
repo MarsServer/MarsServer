@@ -41,7 +41,7 @@ namespace MarsServer
             try
             {
                 fbInfo.team = new Team();
-                fbInfo.team.teamId = fbInfo.teamId;
+                //fbInfo.team.teamId = fbInfo.teamId;
                 //fbInfo.team.roles = new List<Role>();
                 //fbInfo.team.roles.Add(peer.role);
                 
@@ -112,7 +112,7 @@ namespace MarsServer
             {
                 infos.Remove(teaminfo.teamId);
                 teaminfo.teamId = role.roleId;
-                teaminfo.team.teamId = role.roleId;
+                //teaminfo.team.teamId = role.roleId;
                 infos.Add(teaminfo.teamId, teaminfo);
 
                 foreach (MarsPeerOld p in teaminfo.peers)

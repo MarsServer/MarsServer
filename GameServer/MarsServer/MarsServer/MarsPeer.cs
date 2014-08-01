@@ -28,6 +28,11 @@ namespace MarsServer
         public float xRo { get; private set; }
         public float zRo { get; private set; }
         public int acion { get; private set; }
+
+        /// <summary>
+        /// it'ss very import,is Game room
+        /// </summary>
+        public Team team { get; private set; }
         #endregion
 
         #region constructor & HandshakeHandle & ClearData
@@ -97,8 +102,8 @@ namespace MarsServer
                 case Command.SendChat:
                     HandleSendChatOperation(json, cmd);
                     return;
-                case Command.CreatTeam:
-                    bundle = HandleCreatTeamOperation(json, cmd);
+                case Command.JoinTeam:
+                    bundle = HandleJoinTeamOperation(json, cmd);
                     break;
             }
 
@@ -261,8 +266,8 @@ namespace MarsServer
         }
         #endregion
 
-        #region HandleCreatTeamOperation
-        Bundle HandleCreatTeamOperation(string json, Command cmd)
+        #region HandleJoinTeamOperation
+        Bundle HandleJoinTeamOperation(string json, Command cmd)
         {
             Role role = JsonConvert.DeserializeObject<Role>(json);
             Bundle bundle = new Bundle();

@@ -94,8 +94,10 @@
     <Compile Include="MySQL\SQLConstants.cs" />
     <Compile Include="PlayersOld\PlayersManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Room\PublicZone.cs" />
     <Compile Include="Room\Room.cs" />
     <Compile Include="Room\RoomCollection.cs" />
+    <Compile Include="Room\RoomInstance.cs" />
     <Compile Include="StringEncrypt\CSharpEncrypt.cs" />
   </ItemGroup>
   <ItemGroup>
