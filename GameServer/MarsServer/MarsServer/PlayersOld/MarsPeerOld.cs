@@ -253,11 +253,11 @@ namespace MarsServer
                     return;
                 }
             }
-            else if (cmd == (byte)Command.LeftTeam)
+            else if (cmd == (byte)Command.LeaveTeam)
             {
                 Role r = JsonConvert.DeserializeObject<Role>(getJson);
                 bundle = new Bundle();
-                bundle.cmd = Command.LeftTeam;
+                bundle.cmd = Command.LeaveTeam;
                 List<MarsPeerOld> peers = new List<MarsPeerOld>();
                 Role secondRole = null;
                 foreach (MarsPeerOld p in FightManager.instance.GetTeamInfo (teamId).peers)

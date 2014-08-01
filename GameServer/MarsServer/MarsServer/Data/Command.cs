@@ -22,7 +22,7 @@
 
     CreatTeam,
     JoinTeam,
-    LeftTeam,
+    LeaveTeam,
     SwapTeamLeader,
     DismissTeam,
     TeamUpdate,

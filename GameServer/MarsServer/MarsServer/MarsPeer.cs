@@ -118,6 +118,9 @@ namespace MarsServer
                 case Command.JoinTeam:
                     bundle = HandleJoinTeamOperation(json, cmd);
                     break;
+                case Command.LeaveTeam:
+                    HandleLeaveTeamOperation(json, cmd);
+                    return;
             }
 
             if (bundle != null)
@@ -308,6 +311,26 @@ namespace MarsServer
 
             //Send self
             return bundle;
+        }
+        #endregion
+
+        #region HandleLeaveTeamOperation
+        void HandleLeaveTeamOperation(string json, Command cmd)
+        {
+            Team g_team = JsonConvert.DeserializeObject<Team>(json);
+            Bundle bundle = new Bundle();
+
+            ////Team id.......
+            if (team != null)
+            {
+                Role g_role = RoomInstance.instance.LeaveTeamRole(this);
+                Role s_role = new Role();
+                s_role.roleId = g_role.roleId;
+                bundle.cmd = cmd;
+                bundle.role = s_role;
+                //send other
+                RoomInstance.instance.BroadcastEvent (this, bundle, Room.BroadcastType.Notice);
+            }            
         }
         #endregion
 
