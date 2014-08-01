@@ -42,9 +42,14 @@ namespace MarsServer
         public int acion { get; private set; }
 
         /// <summary>
-        /// it'ss very import,is Game room
+        /// it's very import,is Game room
         /// </summary>
         public Team team { get; private set; }
+
+        /// <summary>
+        /// it's very import, is Game Fight
+        /// </summary>
+        public Fight fight { get; private set; }
         #endregion
 
         #region constructor & HandshakeHandle & ClearData
@@ -120,6 +125,9 @@ namespace MarsServer
                     break;
                 case Command.LeaveTeam:
                     HandleLeaveTeamOperation(json, cmd);
+                    return;
+                case Command.EnterFight:
+                    bundle = HandleEnterFightOperation(json, cmd);
                     return;
             }
 
@@ -328,9 +336,22 @@ namespace MarsServer
                 s_role.roleId = g_role.roleId;
                 bundle.cmd = cmd;
                 bundle.role = s_role;
+
+                team = null;
                 //send other
                 RoomInstance.instance.BroadcastEvent (this, bundle, Room.BroadcastType.Notice);
             }            
+        }
+        #endregion
+
+        #region HandleEnterFightOperation
+        Bundle HandleEnterFightOperation(string json, Command cmd)
+        {
+            Fight g_fight = JsonConvert.DeserializeObject<Fight>(json);
+            Bundle bundle = new Bundle();
+            
+            //Handle fight
+            return bundle;
         }
         #endregion
 
