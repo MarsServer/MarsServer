@@ -26,6 +26,7 @@
     SwapTeamLeader,
     DismissTeam,
     TeamUpdate,
+    PlayerAdd,
 
     EnterFight,
 

@@ -34,7 +34,7 @@ namespace MarsServer
         /// <summary>
         /// region is that player now in which region. 0-publiczone, roomId-other
         /// </summary>
-        public int region { get; private set; }
+        public long region { get; private set; }
         public float x { get; private set; }
         public float z { get; private set; }
         public float xRo { get; private set; }
@@ -119,17 +119,20 @@ namespace MarsServer
                     HandleUpdatePlayerOnOperation(json, cmd);
                     return;
                 case Command.SendChat:
-                    HandleSendChatOperation(json, cmd);
+                    HandleSendChatOnOperation(json, cmd);
                     return;
                 case Command.JoinTeam:
-                    bundle = HandleJoinTeamOperation(json, cmd);
+                    bundle = HandleJoinTeamOnOperation(json, cmd);
                     break;
                 case Command.LeaveTeam:
-                    HandleLeaveTeamOperation(json, cmd);
+                    HandleLeaveTeamOnOperation(json, cmd);
                     return;
                 case Command.EnterFight:
-                    bundle = HandleEnterFightOperation(json, cmd);
+                    bundle = HandleEnterFightOnOperation(json, cmd);
                     break;
+                case Command.TeamUpdate:
+                    HandleTeamUpdateOnOperation(json, cmd);
+                    return;
             }
 
             if (bundle != null)
@@ -145,6 +148,8 @@ namespace MarsServer
         {
             Server server = JsonConvert.DeserializeObject<Server>(json);
             Bundle bundle = new Bundle();
+
+            region = Constants.SelectRole;
 
             accountId = server.accountId;
 
@@ -247,8 +252,30 @@ namespace MarsServer
         }
         #endregion
 
+        #region CommonMethod
+        void RemoveRoomFromPublicZone()
+        {
+             if (Role != null)
+            {
+                //get all online peers, in same region
+                List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+                {
+                    return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
+                });*/
+                if (peers.Count > 0)
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.cmd = Command.DestroyPlayer;
+                    bundle.role = new Role();
+                    bundle.role.roleId = roleId;
+                    BroadCastEvent(peers, bundle);
+                }
+             }
+        }
+        #endregion
+
         #region HandleSendChatOperation
-        void HandleSendChatOperation(string json, Command cmd)
+        void HandleSendChatOnOperation(string json, Command cmd)
         {
             Message message = JsonConvert.DeserializeObject<Message>(json);
             Bundle bundle = new Bundle();
@@ -265,20 +292,7 @@ namespace MarsServer
         {
             if (Role != null)
             {
-                //get all online peers, in same region
-                List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
-                {
-                    return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
-                });*/
-                if (peers.Count > 0)
-                {
-                    Bundle bundle = new Bundle();
-                    bundle.cmd = Command.DestroyPlayer;
-                    bundle.role = new Role();
-                    bundle.role.roleId = roleId;
-                    BroadCastEvent(peers, bundle);
-                }
-
+                RemoveRoomFromPublicZone();
                 if (team != null)
                 {
                     RoomInstance.instance.LeaveTeamRole(this);
@@ -290,7 +304,7 @@ namespace MarsServer
         #endregion
 
         #region HandleJoinTeamOperation
-        Bundle HandleJoinTeamOperation(string json, Command cmd)
+        Bundle HandleJoinTeamOnOperation(string json, Command cmd)
         {
             Team g_team = JsonConvert.DeserializeObject<Team>(json);
             Bundle bundle = new Bundle();
@@ -324,7 +338,7 @@ namespace MarsServer
         #endregion
 
         #region HandleLeaveTeamOperation
-        void HandleLeaveTeamOperation(string json, Command cmd)
+        void HandleLeaveTeamOnOperation(string json, Command cmd)
         {
             Team g_team = JsonConvert.DeserializeObject<Team>(json);
             Bundle bundle = new Bundle();
@@ -346,20 +360,73 @@ namespace MarsServer
         #endregion
 
         #region HandleEnterFightOperation
-        Bundle HandleEnterFightOperation(string json, Command cmd)
+        Bundle HandleEnterFightOnOperation(string json, Command cmd)
         {
+            RemoveRoomFromPublicZone();
+
+
             Fight g_fight = JsonConvert.DeserializeObject<Fight>(json);
             Bundle bundle = new Bundle();
             bundle.fight = g_fight;
+
+            this.fight = g_fight;
+
+            region = fight.id;
+
             //if you have team, find all team's peer
             if (team != null)
             {
                 bundle.cmd = Command.EnterFight;
-                //TODO:
+                bundle.onlineRoles = new List<Role>();
+                foreach (MarsPeer for_p in team.peers)
+                {
+                    if (for_p.region == region)
+                    {
+                        Role s_role = new Role();
+                        s_role.roleId = for_p.roleId;
+                        s_role.roleName = for_p.Role.roleName;
+                        s_role.profession = for_p.Role.profession;
+                        s_role.level = for_p.Role.level;
+                        s_role.x = for_p.x;
+                        s_role.z = for_p.z;
+                        s_role.xRo = for_p.xRo;
+                        s_role.zRo = for_p.zRo;
+                        bundle.onlineRoles.Add(s_role);
+                    }
+                }
+
+                //broast all peers, add new role in fight
+                Role mRole = new Role();
+                mRole.roleId = Role.roleId;
+                mRole.roleName = Role.roleName;
+                mRole.profession = Role.profession;
+                Bundle mBundle = new Bundle();
+                mBundle.cmd = Command.PlayerAdd;
+                mBundle.role = mRole;
+                RoomInstance.instance.BroadcastEvent(this, mBundle, Room.BroadcastType.Region);
             }
 
             //Handle fight
             return bundle;
+        }
+        #endregion
+
+        #region HandleTeamUpdateOnOperation
+        void HandleTeamUpdateOnOperation(string json, Command cmd)
+        {
+            if (team != null)
+            {
+                Role mRole = JsonConvert.DeserializeObject<Role>(json);
+                x = mRole.x;
+                z = mRole.z;
+                xRo = mRole.xRo;
+                zRo = mRole.zRo;
+                acion = mRole.action;
+                Bundle bundle = new Bundle();
+                bundle.role = mRole;
+                bundle.cmd = Command.TeamUpdate;
+                RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);
+            }
         }
         #endregion
 
