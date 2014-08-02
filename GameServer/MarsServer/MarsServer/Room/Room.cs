@@ -130,7 +130,7 @@ namespace MarsServer
                     {
                         if (broadcastType == BroadcastType.Region)
                         {
-                            if (peer.region != for_p.region)
+                            if (peer.region != for_p.region || peer.region == Constants.SelectRole)
                             {
                                 continue;
                             }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 public class Constants
 {
+    public const int SelectRole = 0;
     public const int PUBLICZONE = 120;
     public const int PUBLICZONE_MAX_NUM = 15;
 }

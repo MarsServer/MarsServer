@@ -80,6 +80,7 @@ namespace MarsServer
              zRo = 0;
              acion = 0;
              team = null;
+             fight = null;
          }
 
         #endregion
@@ -128,7 +129,7 @@ namespace MarsServer
                     return;
                 case Command.EnterFight:
                     bundle = HandleEnterFightOperation(json, cmd);
-                    return;
+                    break;
             }
 
             if (bundle != null)
@@ -349,7 +350,14 @@ namespace MarsServer
         {
             Fight g_fight = JsonConvert.DeserializeObject<Fight>(json);
             Bundle bundle = new Bundle();
-            
+            bundle.fight = g_fight;
+            //if you have team, find all team's peer
+            if (team != null)
+            {
+                bundle.cmd = Command.EnterFight;
+                //TODO:
+            }
+
             //Handle fight
             return bundle;
         }

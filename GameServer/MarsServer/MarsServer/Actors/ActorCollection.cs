@@ -39,7 +39,7 @@ namespace MarsServer
         /// <returns></returns>
         public List<MarsPeer> GetPeersByOthers(MarsPeer peer)
         {
-            IEnumerable<MarsPeer> myPeersList = this.Where(marsPeer => (marsPeer.region != 0 && marsPeer.accountId != peer.accountId));
+            IEnumerable<MarsPeer> myPeersList = this.Where(marsPeer => (marsPeer.region != Constants.SelectRole && marsPeer.accountId != peer.accountId));
 
             List<MarsPeer> peers = new List<MarsPeer>();
             foreach (MarsPeer for_peer in myPeersList)
