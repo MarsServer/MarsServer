@@ -143,6 +143,37 @@ namespace MarsServer
         }
         #endregion
 
+        #region CommonMethod
+        protected void RemoveRoomFromPublicZone()
+        {
+            if (Role != null)
+            {
+                //get all online peers, in same region
+                List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
+                {
+                    return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
+                });*/
+                if (peers.Count > 0)
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.cmd = Command.DestroyPlayer;
+                    bundle.role = new Role();
+                    bundle.role.roleId = roleId;
+                    BroadCastEvent(peers, bundle);
+                }
+            }
+        }
+
+        protected void UpdateRoleState(Role mRole)
+        {
+            x = mRole.x;
+            z = mRole.z;
+            xRo = mRole.xRo;
+            zRo = mRole.zRo;
+            acion = mRole.action;
+        }
+        #endregion
+
         #region HandleServerSelectOnOperation
         Bundle HandleServerSelectOnOperation(string json, Command cmd)
         {
@@ -201,7 +232,7 @@ namespace MarsServer
 
             //Self's role
             roleId = role.roleId;
-            Role newRole = RoleMySQL.instance.getRoleByRoleId(roleId);
+            Role newRole = this.Role;//RoleMySQL.instance.getRoleByRoleId(roleId);
             if (newRole != null)
             {
                 region = Constants.PUBLICZONE;
@@ -231,11 +262,7 @@ namespace MarsServer
         void HandleUpdatePlayerOnOperation(string json, Command cmd)
         {
             Role mRole = JsonConvert.DeserializeObject<Role>(json);
-            x = mRole.x;
-            z = mRole.z;
-            xRo = mRole.xRo;
-            zRo = mRole.zRo;
-            acion = mRole.action;
+            UpdateRoleState(mRole);
             
             //get all online peers, in public region
             List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
@@ -249,28 +276,6 @@ namespace MarsServer
                 bundle.cmd = Command.UpdatePlayer;
                 BroadCastEvent(peers, bundle);
             }
-        }
-        #endregion
-
-        #region CommonMethod
-        void RemoveRoomFromPublicZone()
-        {
-             if (Role != null)
-            {
-                //get all online peers, in same region
-                List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
-                {
-                    return peer.accountId == accountId || peer.region != region;////account is self, or not in same pos, don't add list Peer
-                });*/
-                if (peers.Count > 0)
-                {
-                    Bundle bundle = new Bundle();
-                    bundle.cmd = Command.DestroyPlayer;
-                    bundle.role = new Role();
-                    bundle.role.roleId = roleId;
-                    BroadCastEvent(peers, bundle);
-                }
-             }
         }
         #endregion
 
@@ -417,11 +422,7 @@ namespace MarsServer
             if (team != null)
             {
                 Role mRole = JsonConvert.DeserializeObject<Role>(json);
-                x = mRole.x;
-                z = mRole.z;
-                xRo = mRole.xRo;
-                zRo = mRole.zRo;
-                acion = mRole.action;
+                UpdateRoleState(mRole);
                 Bundle bundle = new Bundle();
                 bundle.role = mRole;
                 bundle.cmd = Command.TeamUpdate;
