@@ -134,7 +134,7 @@ namespace MarsServer
                     HandleTeamUpdateOnOperation(json, cmd);
                     return;
                 case Command.MonsterRefresh:
-                    HandleMonsterRefreshOnOperation(json, cmd);
+                    bundle = HandleMonsterRefreshOnOperation(json, cmd);
                     break;
             }
 
@@ -437,7 +437,21 @@ namespace MarsServer
         #region HandleMonsterRefreshOnOperation
         Bundle HandleMonsterRefreshOnOperation(string json, Command cmd)
         {
-            return null;
+            FightRegion g_fr = JsonConvert.DeserializeObject<FightRegion>(json);
+            Bundle bundle = new Bundle ();
+
+            //send fight region
+            bundle.region = g_fr;
+
+            LvInfo lvInfo = LvInfoSQL.instance.GetValueByK(g_fr.scId);
+            if (lvInfo != null)
+            {
+                //Fight g_Fight = JsonConvert.DeserializeObject<Fight>(lvInfo.scInfoJson);
+                bundle.gameMonsters = lvInfo.fight.gameMonsters[g_fr.index];
+            }
+
+
+            return bundle;
         }
         #endregion
 

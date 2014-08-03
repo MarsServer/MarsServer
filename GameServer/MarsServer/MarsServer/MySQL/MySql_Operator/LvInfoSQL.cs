@@ -15,7 +15,9 @@ namespace MarsServer
         [DefaultValue(null)]
         public string scId;
         [DefaultValue(null)]
-        public string scInfoJson;
+        private string scInfoJson;
+        [DefaultValue(null)]
+        public Fight fight;
 
     }
 
@@ -33,7 +35,7 @@ namespace MarsServer
             LvInfo li = new LvInfo();
             li.id = int.Parse(row[0].ToString());
             li.scId = row[1].ToString();
-            li.scInfoJson = row[2].ToString();
+            li.fight = JsonConvert.DeserializeObject<Fight>(row[2].ToString());
             datas.Add(li.scId, li);
         }
     }
