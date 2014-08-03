@@ -133,6 +133,9 @@ namespace MarsServer
                 case Command.TeamUpdate:
                     HandleTeamUpdateOnOperation(json, cmd);
                     return;
+                case Command.MonsterRefresh:
+                    HandleMonsterRefreshOnOperation(json, cmd);
+                    break;
             }
 
             if (bundle != null)
@@ -428,6 +431,13 @@ namespace MarsServer
                 bundle.cmd = Command.TeamUpdate;
                 RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);
             }
+        }
+        #endregion
+
+        #region HandleMonsterRefreshOnOperation
+        Bundle HandleMonsterRefreshOnOperation(string json, Command cmd)
+        {
+            
         }
         #endregion
 
