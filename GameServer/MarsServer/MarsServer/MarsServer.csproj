@@ -70,6 +70,8 @@
     <Compile Include="Data\Command.cs" />
     <Compile Include="Data\Error.cs" />
     <Compile Include="Data\Fight.cs" />
+    <Compile Include="Data\FightRegion.cs" />
+    <Compile Include="Data\GameMonster.cs" />
     <Compile Include="Data\Message.cs" />
     <Compile Include="Data\NetError.cs" />
     <Compile Include="Data\NetSuccess.cs" />

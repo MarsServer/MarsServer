@@ -32,6 +32,7 @@
 
     PlayerDone,
 
+    MonsterRefresh,
     MonsterStateUpdate,
 
     NetError,
