@@ -81,8 +81,10 @@
     <Compile Include="Data\SQLiteVer.cs" />
     <Compile Include="Data\Team.cs" />
     <Compile Include="DebugLog\Debug.cs" />
+    <Compile Include="Fight\FightInstance.cs" />
     <Compile Include="MarsPeer.cs" />
     <Compile Include="Message\MessageManager.cs" />
+    <Compile Include="MySQL\MySql_Operator\LvInfoSQL.cs" />
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />
     <Compile Include="PlayersOld\Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />

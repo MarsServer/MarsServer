@@ -437,7 +437,7 @@ namespace MarsServer
         #region HandleMonsterRefreshOnOperation
         Bundle HandleMonsterRefreshOnOperation(string json, Command cmd)
         {
-            
+            return null;
         }
         #endregion
 

@@ -31,5 +31,7 @@ namespace MarsServer
         public const string MySQL_PROPERTY_LIST = "select * from property";
         /*exp*/
         public const string MySQL_EXP_LIST = "select * from exp";
+        /*LV_INFO*/
+        public const string MySQL_LV_INF_LIST = "select * from LV_INFO";
     }
 }

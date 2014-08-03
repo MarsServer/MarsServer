@@ -28,6 +28,9 @@ namespace MarsServer
 
             ExpMySQL.instance.Init();
             Debug.Log("ExpMySQL is Ok...............................................");
+
+            LvInfoSQL.instance.Init();
+            Debug.Log("LvInfoSQL is Ok...............................................");
         }
 
         protected override void TearDown()
