@@ -235,9 +235,25 @@ namespace MarsServer
 
             //Self's role
             roleId = role.roleId;
-            Role newRole = this.Role;//RoleMySQL.instance.getRoleByRoleId(roleId);
+            Role newRole = new Role();//this.Role;//RoleMySQL.instance.getRoleByRoleId(roleId);
             if (newRole != null)
             {
+                newRole.accountId = this.Role.accountId;
+                newRole.roleId = this.Role.roleId;
+                newRole.roleName = this.Role.roleName;
+                newRole.sex = this.Role.sex;
+                newRole.exp = this.Role.exp;
+                newRole.profession = this.Role.profession;
+                newRole.level = this.Role.level;
+
+                PropertyValue pv = Property.instance.GetValueByK(newRole.profession);
+                newRole.strength = pv.strength;
+                newRole.stamina = pv.stamina;
+                newRole.wit = pv.wit;
+                newRole.agility = pv.agility;
+                
+               
+
                 region = Constants.PUBLICZONE;
                 bundle.onlineRoles = Actor.Instance.HandleRoleListOnlineBySamePos (this);
                 bundle.role = newRole;
