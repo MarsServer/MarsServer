@@ -13,7 +13,7 @@ namespace MarsServer
     {
         #region property
 
-        //private readonly IFiber fiber;
+        private readonly IFiber fiber;
 
         public long accountId { get; private set; }
         public long roleId { get; private set; }
@@ -56,8 +56,8 @@ namespace MarsServer
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
             : base(rpc, peer)
         {
-            //this.fiber = new PoolFiber();
-            //this.fiber.Start();
+            this.fiber = new PoolFiber();
+            this.fiber.Start();
 
             HandshakeHandle();
         }
@@ -475,7 +475,8 @@ namespace MarsServer
         public void SendClientEvent(Bundle bundle)
         {
             OperationResponse response = new OperationResponse((byte)bundle.cmd, GetParameter (bundle)) { ReturnCode = 1, DebugMessage = "" };
-            SendOperationResponse(response, new SendParameters());
+            //SendOperationResponse(response, new SendParameters());
+            this.fiber.Enqueue(()=>SendOperationResponse (response, new SendParameters()));
         }
 
 
