@@ -76,6 +76,8 @@
     <Compile Include="MySQL\DBUtility.cs" />
     <Compile Include="MySQL\MySqlOperator\MysqlAccount.cs" />
     <Compile Include="MySQL\MySqlOperator\ServerController.cs" />
+    <Compile Include="MySQL\MySqlOperator\SqliteSQL.cs" />
+    <Compile Include="MySQL\SQLCommon.cs" />
     <Compile Include="MySQL\SQLConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringEncrypt\CSharpEncrypt.cs" />

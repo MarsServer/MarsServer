@@ -20,6 +20,9 @@ namespace LoginServer
             Debug.instance.Setup(this);
             ServerController.instance.GetServerList();
             Debug.Log("Login Server Running.....");
+
+            SqliteSQL.instance.Init();
+            Debug.Log("SqliteSQL is okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         }
 
         protected override void TearDown()
