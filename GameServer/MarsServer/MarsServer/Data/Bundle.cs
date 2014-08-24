@@ -59,6 +59,9 @@ public class Bundle
     [DefaultValue(null)]
     public GameMonster[] gameMonsters;
 
+    [DefaultValue(null)]
+    public GameMonster gameMonster;
+
     public Bundle() {  }
 
 	/*[DefaultValue (null)]

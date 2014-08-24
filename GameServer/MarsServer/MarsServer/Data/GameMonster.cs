@@ -28,10 +28,12 @@ public class GameMonster
     public int gem;
     [DefaultValue(0)]
     public int level;
-    [DefaultValue(0)]
+    [DefaultValue(0F)]
     public float hp;
-    [DefaultValue(0)]
+    [DefaultValue(0F)]
     public float hpMax;
+    [DefaultValue(0F)]
+    public float deductHp;
 
     [DefaultValue(0F)]
     public float x;
