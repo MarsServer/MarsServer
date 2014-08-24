@@ -50,6 +50,7 @@ namespace MarsServer
         /// it's very import, is Game Fight
         /// </summary>
         public Fight fight { get; private set; }
+        public FightCache fightCache { get; private set; }
         #endregion
 
         #region constructor & HandshakeHandle & ClearData
@@ -135,6 +136,9 @@ namespace MarsServer
                     return;
                 case Command.MonsterRefresh:
                     bundle = HandleMonsterRefreshOnOperation(json, cmd);
+                    break;
+                case Command.MonsterStateUpdate:
+                    bundle = HandleMonsterStateUpdateOnOperation(json, cmd);
                     break;
             }
 
@@ -321,6 +325,7 @@ namespace MarsServer
                 {
                     RoomInstance.instance.LeaveTeamRole(this);
                 }
+                FightInstance.instance.Remove(fightCache);
             }
             Actor.Instance.HandleDisconnect(this);
             ClearData();
@@ -466,6 +471,23 @@ namespace MarsServer
                 bundle.gameMonsters = lvInfo.fight.gameMonsters[g_fr.index];
             }
 
+            Dictionary<string, GameMonster> gmDict = new Dictionary<string, GameMonster>();
+            foreach (GameMonster gm in bundle.gameMonsters)
+            {
+                gmDict.Add(gm.id, gm);
+            }
+            FightCache cache = FightInstance.instance.GetFightCache(role.roleId.ToString(), gmDict);
+            this.fightCache = cache;
+
+            return bundle;
+        }
+        #endregion
+
+        #region HandleMonsterStateUpdateOnOperation
+        Bundle HandleMonsterStateUpdateOnOperation(string json, Command cmd)
+        {
+            Bundle bundle = new Bundle();
+            GameMonster gm = JsonConvert.DeserializeObject<GameMonster>(json);
 
             return bundle;
         }

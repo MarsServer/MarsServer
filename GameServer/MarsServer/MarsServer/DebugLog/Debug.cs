@@ -20,7 +20,7 @@ namespace MarsServer
         public void Setup(MarsApplication loginApplication)
         {
             LogManager.SetLoggerFactory(Log4NetLoggerFactory.Instance);
-            GlobalContext.Properties["LogFileName"] = loginApplication.ApplicationName + "Log";// + System.DateTime.Now.ToString("yyyy-MM-dd");
+            GlobalContext.Properties["LogFileName"] = loginApplication.ApplicationName + System.DateTime.Now.ToString("yyyy-MM-dd");
             XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(loginApplication.BinaryPath, "log4net.config")));
             // 初始化GameServer
 

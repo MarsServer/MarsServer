@@ -22,7 +22,7 @@ public class FightCache
     {
         foreach (KeyValuePair<string, GameMonster> gm in gameMonsters)
         {
-            gameMonsters.Add(gm.Key, gm.Value);
+           this.gameMonsters.Add(gm.Key, gm.Value);
         }
     }
 

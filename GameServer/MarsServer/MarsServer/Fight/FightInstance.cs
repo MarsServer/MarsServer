@@ -24,7 +24,8 @@ public class FightInstance
         FightCache fightCache = null;
         if (Fights.TryGetValue(id, out fightCache) == false)
         {
-            fightCache = new FightCache(MinFightCacheId++.ToString (), gameMonsters);
+            fightCache = new FightCache(id, gameMonsters);
+            Fights.Add(fightCache);
         }
         else if (gameMonsters != null)
         {
@@ -54,9 +55,9 @@ public class FightInstance
     /// <param name="fightCache"></param>
     public void Remove(FightCache fightCache)
     {
-        Debug.Log(Fights.Count);
+        Debug.Log("**********" + Fights.Count);
         Fights.Remove(fightCache);
-        Debug.Log(Fights.Count);
+        Debug.Log("**********" + Fights.Count);
     }
 
     public void SaveMonster()
