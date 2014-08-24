@@ -8,8 +8,8 @@ using System.ComponentModel;
 
 public class GameMonster
 {
-    [DefaultValue(0L)]
-    public long id;
+    [DefaultValue(null)]
+    public string id;
     [DefaultValue(null)]
     public string type;
     [DefaultValue(null)]
@@ -45,4 +45,14 @@ public class GameMonster
     public float action;
     [DefaultValue(false)]
     public bool isBoss;
+
+    [DefaultValue(0)]
+    public int state;
+
+    [DefaultValue(0F)]
+    public float target_x;
+    [DefaultValue(0F)]
+    public float target_y;
+    [DefaultValue(0F)]
+    public float target_z;
 }

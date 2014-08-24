@@ -81,6 +81,8 @@
     <Compile Include="Data\SQLiteVer.cs" />
     <Compile Include="Data\Team.cs" />
     <Compile Include="DebugLog\Debug.cs" />
+    <Compile Include="Fight\FightCache.cs" />
+    <Compile Include="Fight\FightCollection.cs" />
     <Compile Include="Fight\FightInstance.cs" />
     <Compile Include="MarsPeer.cs" />
     <Compile Include="Message\MessageManager.cs" />
