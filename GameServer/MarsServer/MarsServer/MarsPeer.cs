@@ -489,6 +489,15 @@ namespace MarsServer
             Bundle bundle = new Bundle();
             GameMonster gm = JsonConvert.DeserializeObject<GameMonster>(json);
 
+            GameMonster gameMonster = new GameMonster();
+            gameMonster.id = gm.id;
+            GameMonster g_gm = fightCache.Update(gm);
+            if (g_gm != null)
+            {
+                gameMonster.hp = g_gm.hp;
+            }
+            bundle.gameMonster = gameMonster;
+
             return bundle;
         }
         #endregion

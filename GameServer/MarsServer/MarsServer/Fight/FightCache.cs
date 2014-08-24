@@ -31,8 +31,15 @@ public class FightCache
         gameMonsters.Remove(id);
     }
 
-    public void Update(GameMonster gm)
+    public GameMonster Update(GameMonster gm)
     {
- 
+        GameMonster gameMonster = null;
+        this.gameMonsters.TryGetValue(gm.id, out gameMonster);
+
+        if (gameMonster != null)
+        {
+            gameMonster.hp -= gm.deductHp;
+        }
+        return gameMonster;
     }
 }
