@@ -255,6 +255,7 @@ namespace MarsServer
                 newRole.stamina = pv.stamina;
                 newRole.wit = pv.wit;
                 newRole.agility = pv.agility;
+                newRole.critical = pv.critical;
                 
                
 
@@ -497,6 +498,12 @@ namespace MarsServer
                 gameMonster.hp = g_gm.hp;
             }
             bundle.gameMonster = gameMonster;
+
+            if (team != null)
+            {
+                bundle.cmd = cmd;
+                RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);
+            }
 
             return bundle;
         }

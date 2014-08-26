@@ -34,6 +34,8 @@ public class GameMonster
     public float hpMax;
     [DefaultValue(0F)]
     public float deductHp;
+    [DefaultValue(0L)]
+    public long attId;
 
     [DefaultValue(0F)]
     public float x;

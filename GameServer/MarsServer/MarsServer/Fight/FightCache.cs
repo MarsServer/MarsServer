@@ -39,6 +39,7 @@ public class FightCache
         if (gameMonster != null)
         {
             gameMonster.hp -= gm.deductHp;
+            gameMonster.hp = Math.Max(gameMonster.hp, 0);
         }
         return gameMonster;
     }
