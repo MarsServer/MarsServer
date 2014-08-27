@@ -492,7 +492,7 @@ namespace MarsServer
 
             GameMonster gameMonster = new GameMonster();
             gameMonster.id = gm.id;
-            GameMonster g_gm = fightCache.Update(gm);
+            GameMonster g_gm = fightCache.UpdateHp(gm);
             if (g_gm != null)
             {
                 gameMonster.hp = g_gm.hp;

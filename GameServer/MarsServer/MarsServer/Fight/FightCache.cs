@@ -31,7 +31,7 @@ public class FightCache
         gameMonsters.Remove(id);
     }
 
-    public GameMonster Update(GameMonster gm)
+    public GameMonster UpdateHp(GameMonster gm)
     {
         GameMonster gameMonster = null;
         this.gameMonsters.TryGetValue(gm.id, out gameMonster);
@@ -42,5 +42,16 @@ public class FightCache
             gameMonster.hp = Math.Max(gameMonster.hp, 0);
         }
         return gameMonster;
+    }
+
+    public void UpdateAttId(GameMonster gm)
+    {
+        GameMonster gameMonster = null;
+        this.gameMonsters.TryGetValue(gm.id, out gameMonster);
+
+        if (gameMonster != null)
+        {
+            gameMonster.attId -= gm.attId;
+        }
     }
 }
