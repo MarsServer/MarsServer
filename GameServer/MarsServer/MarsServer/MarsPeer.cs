@@ -19,6 +19,7 @@ namespace MarsServer
         private MessageOperator messageOperator;
         private TeamOperator teamOperator;
         private FightOperator fightOperator;
+        private MonsterOperator monsterOperator;
         #endregion
 
         public long accountId { get; private set; }
@@ -56,7 +57,7 @@ namespace MarsServer
         /// it's very import, is Game Fight
         /// </summary>
         public Fight fight { get; private set; }
-        public FightCache fightCache { get; private set; }
+        public FightCache fightCache { get; set; }
         #endregion
 
         #region constructor & HandshakeHandle & ClearData
@@ -68,6 +69,7 @@ namespace MarsServer
             messageOperator = new MessageOperator(this);
             teamOperator = new TeamOperator(this);
             fightOperator = new FightOperator(this);
+            monsterOperator = new MonsterOperator(this);
             HandshakeHandle();
         }
 
@@ -148,10 +150,10 @@ namespace MarsServer
                     HandleTeamUpdateOnOperation(json, cmd);
                     return;
                 case Command.MonsterRefresh:
-                    bundle = HandleMonsterRefreshOnOperation(json, cmd);
+                    HandleMonsterRefreshOnOperation(json, cmd);
                     break;
                 case Command.MonsterStateUpdate:
-                    bundle = HandleMonsterStateUpdateOnOperation(json, cmd);
+                    HandleMonsterStateUpdateOnOperation(json, cmd);
                     break;
             }
 
@@ -364,55 +366,23 @@ namespace MarsServer
         #endregion
 
         #region HandleMonsterRefreshOnOperation
-        Bundle HandleMonsterRefreshOnOperation(string json, Command cmd)
+        void HandleMonsterRefreshOnOperation(string json, Command cmd)
         {
             FightRegion g_fr = JsonConvert.DeserializeObject<FightRegion>(json);
-            Bundle bundle = new Bundle ();
+            monsterOperator.EnqueueOperator(cmd, g_fr);
 
-            //send fight region
-            bundle.region = g_fr;
-
-            LvInfo lvInfo = LvInfoSQL.instance.GetValueByK(g_fr.scId);
-            if (lvInfo != null)
-            {
-                //Fight g_Fight = JsonConvert.DeserializeObject<Fight>(lvInfo.scInfoJson);
-                bundle.gameMonsters = lvInfo.fight.gameMonsters[g_fr.index];
-            }
-
-            Dictionary<string, GameMonster> gmDict = new Dictionary<string, GameMonster>();
-            foreach (GameMonster gm in bundle.gameMonsters)
-            {
-                gmDict.Add(gm.id, gm);
-            }
-            FightCache cache = FightInstance.instance.GetFightCache(role.roleId.ToString(), gmDict);
-            this.fightCache = cache;
-
-            return bundle;
+           // return bundle;
         }
         #endregion
 
         #region HandleMonsterStateUpdateOnOperation
-        Bundle HandleMonsterStateUpdateOnOperation(string json, Command cmd)
+        void HandleMonsterStateUpdateOnOperation(string json, Command cmd)
         {
-            Bundle bundle = new Bundle();
+            //Bundle bundle = new Bundle();
             GameMonster gm = JsonConvert.DeserializeObject<GameMonster>(json);
 
-            GameMonster gameMonster = new GameMonster();
-            gameMonster.id = gm.id;
-            GameMonster g_gm = fightCache.UpdateHp(gm);
-            if (g_gm != null)
-            {
-                gameMonster.hp = g_gm.hp;
-            }
-            bundle.gameMonster = gameMonster;
+            monsterOperator.EnqueueOperator(cmd, gm);
 
-            if (team != null)
-            {
-                bundle.cmd = cmd;
-                RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);
-            }
-
-            return bundle;
         }
         #endregion
 

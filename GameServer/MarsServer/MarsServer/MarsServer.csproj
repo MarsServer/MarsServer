@@ -89,6 +89,7 @@
     <Compile Include="Operator\Fight\FightOperator.cs" />
     <Compile Include="Operator\Message\MessageOperator.cs" />
     <Compile Include="MySQL\MySql_Operator\LvInfoSQL.cs" />
+    <Compile Include="Operator\Monster\MonsterOperator.cs" />
     <Compile Include="Operator\Role\RoleOperator.cs" />
     <Compile Include="Operator\Team\TeamOperator.cs" />
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />
