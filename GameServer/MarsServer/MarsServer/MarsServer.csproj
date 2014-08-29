@@ -86,7 +86,7 @@
     <Compile Include="Fight\FightInstance.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="MarsPeer.cs" />
-    <Compile Include="Message\MessageManager.cs" />
+    <Compile Include="Operator\Message\MessageOperator.cs" />
     <Compile Include="MySQL\MySql_Operator\LvInfoSQL.cs" />
     <Compile Include="Operator\Role\RoleOperator.cs" />
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />

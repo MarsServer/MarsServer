@@ -16,6 +16,7 @@ namespace MarsServer
         #region Queue Operator
         private ServerOperator serverOperator;
         private RoleOperator roleOperator;
+        private MessageOperator messageOperator;
         #endregion
 
         public long accountId { get; private set; }
@@ -62,7 +63,7 @@ namespace MarsServer
         {
             serverOperator = new ServerOperator(this);
             roleOperator = new RoleOperator(this);
-
+            messageOperator = new MessageOperator(this);
             HandshakeHandle();
         }
 
@@ -224,16 +225,6 @@ namespace MarsServer
             UpdateRoleState(mRole);
 
             roleOperator.EnqueueOperator(cmd, mRole);
-
-            /*//get all online peers, in public region
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);
-            if (peers.Count >= 0)
-            {
-                Bundle bundle = new Bundle();
-                bundle.role = mRole;
-                bundle.cmd = Command.UpdatePlayer;
-                BroadCastEvent(peers, bundle);
-            }*/
         }
         #endregion
 
@@ -241,11 +232,12 @@ namespace MarsServer
         void HandleSendChatOnOperation(string json, Command cmd)
         {
             Message message = JsonConvert.DeserializeObject<Message>(json);
-            Bundle bundle = new Bundle();
+            messageOperator.EnqueueOperator(cmd, message);
+            /*Bundle bundle = new Bundle();
             //boastcast message
             bundle.cmd = Command.SendChat;
             bundle.message = message;
-            MessageManager.instance.OnOperationRequest(bundle, this);
+            MessageOperator.instance.OnOperationRequest(bundle, this);*/
 
         }
         #endregion
