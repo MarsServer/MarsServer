@@ -28,6 +28,8 @@ namespace MarsServer
                 bundle.roles = RoleMySQL.instance.GetDataListByAccountId(accountId);
             }
             this.marsPeer.SendClientResponse(bundle);
+
+            bundle = null;
         }
     }
 }

@@ -17,6 +17,7 @@ namespace MarsServer
         private ServerOperator serverOperator;
         private RoleOperator roleOperator;
         private MessageOperator messageOperator;
+        private TeamOperator teamOperator;
         #endregion
 
         public long accountId { get; private set; }
@@ -64,6 +65,7 @@ namespace MarsServer
             serverOperator = new ServerOperator(this);
             roleOperator = new RoleOperator(this);
             messageOperator = new MessageOperator(this);
+            teamOperator = new TeamOperator(this);
             HandshakeHandle();
         }
 
@@ -86,6 +88,11 @@ namespace MarsServer
              acion = 0;
              team = null;
              fight = null;
+         }
+
+         public void ClearTeam()
+         {
+             team = null;
          }
 
         #endregion
@@ -127,7 +134,7 @@ namespace MarsServer
                     HandleSendChatOnOperation(json, cmd);
                     return;
                 case Command.JoinTeam:
-                    bundle = HandleJoinTeamOnOperation(json, cmd);
+                    HandleJoinTeamOnOperation(json, cmd);
                     break;
                 case Command.LeaveTeam:
                     HandleLeaveTeamOnOperation(json, cmd);
@@ -254,36 +261,14 @@ namespace MarsServer
         #endregion
 
         #region HandleJoinTeamOperation
-        Bundle HandleJoinTeamOnOperation(string json, Command cmd)
+        void HandleJoinTeamOnOperation(string json, Command cmd)
         {
             Team g_team = JsonConvert.DeserializeObject<Team>(json);
-            Bundle bundle = new Bundle();
-
-            //Team id.......
+            if (team != null)
+                return;
             Team m_team = RoomInstance.instance.GetTeamById(g_team.teamId, g_team.teamName, this);
             this.team = m_team;
-
-            Team s_team = new Team();
-            s_team.teamId = team.teamId;
-            s_team.teamName = team.teamName;
-            s_team.roles = new List<Role>();
-            foreach (MarsPeer for_p in team.peers)
-            {
-                Role s_role = new Role();
-                s_role.roleId = for_p.roleId;
-                s_role.roleName = for_p.Role.roleName;
-                s_role.profession = for_p.Role.profession;
-                s_role.level = for_p.Role.level;
-                s_team.roles.Add(s_role);
-            }
-            bundle.team = s_team;
-
-            bundle.cmd = cmd;
-            //send others
-            RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Notice);
-
-            //Send self
-            return bundle;
+            teamOperator.EnqueueOperator(cmd, m_team);
         }
         #endregion
 
@@ -291,21 +276,12 @@ namespace MarsServer
         void HandleLeaveTeamOnOperation(string json, Command cmd)
         {
             Team g_team = JsonConvert.DeserializeObject<Team>(json);
-            Bundle bundle = new Bundle();
+            if (team == null) return;
+            teamOperator.EnqueueOperator(cmd, team);
 
-            ////Team id.......
-            if (team != null)
-            {
-                Role g_role = RoomInstance.instance.LeaveTeamRole(this);
-                Role s_role = new Role();
-                s_role.roleId = g_role.roleId;
-                bundle.cmd = cmd;
-                bundle.role = s_role;
+            /*Bundle bundle = new Bundle();
 
-                team = null;
-                //send other
-                RoomInstance.instance.BroadcastEvent (this, bundle, Room.BroadcastType.Notice);
-            }            
+                  */      
         }
         #endregion
 
