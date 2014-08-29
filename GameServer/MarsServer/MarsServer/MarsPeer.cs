@@ -18,6 +18,7 @@ namespace MarsServer
         private RoleOperator roleOperator;
         private MessageOperator messageOperator;
         private TeamOperator teamOperator;
+        private FightOperator fightOperator;
         #endregion
 
         public long accountId { get; private set; }
@@ -66,6 +67,7 @@ namespace MarsServer
             roleOperator = new RoleOperator(this);
             messageOperator = new MessageOperator(this);
             teamOperator = new TeamOperator(this);
+            fightOperator = new FightOperator(this);
             HandshakeHandle();
         }
 
@@ -140,7 +142,7 @@ namespace MarsServer
                     HandleLeaveTeamOnOperation(json, cmd);
                     return;
                 case Command.EnterFight:
-                    bundle = HandleEnterFightOnOperation(json, cmd);
+                    HandleEnterFightOnOperation(json, cmd);
                     break;
                 case Command.TeamUpdate:
                     HandleTeamUpdateOnOperation(json, cmd);
@@ -286,18 +288,24 @@ namespace MarsServer
         #endregion
 
         #region HandleEnterFightOperation
-        Bundle HandleEnterFightOnOperation(string json, Command cmd)
+        void HandleEnterFightOnOperation(string json, Command cmd)
         {
             RemoveRoomFromPublicZone();
 
 
             Fight g_fight = JsonConvert.DeserializeObject<Fight>(json);
-            Bundle bundle = new Bundle();
+            this.fight = g_fight;
+            region = fight.id;
+
+            
+            fightOperator.EnqueueOperator(cmd, fight);
+
+            /*Bundle bundle = new Bundle();
             bundle.fight = g_fight;
 
-            this.fight = g_fight;
+            //this.fight = g_fight;
 
-            region = fight.id;
+            //region = fight.id;
 
             //if you have team, find all team's peer
             if (team != null)
@@ -330,10 +338,10 @@ namespace MarsServer
                 mBundle.cmd = Command.PlayerAdd;
                 mBundle.role = mRole;
                 RoomInstance.instance.BroadcastEvent(this, mBundle, Room.BroadcastType.Region);
-            }
+            }*/
 
             //Handle fight
-            return bundle;
+            //return bundle;
         }
         #endregion
 
@@ -344,10 +352,13 @@ namespace MarsServer
             {
                 Role mRole = JsonConvert.DeserializeObject<Role>(json);
                 UpdateRoleState(mRole);
-                Bundle bundle = new Bundle();
+
+                roleOperator.EnqueueOperator(cmd, mRole);
+
+                /*Bundle bundle = new Bundle();
                 bundle.role = mRole;
                 bundle.cmd = Command.TeamUpdate;
-                RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);
+                RoomInstance.instance.BroadcastEvent(this, bundle, Room.BroadcastType.Region);*/
             }
         }
         #endregion

@@ -30,6 +30,9 @@ namespace MarsServer
                 case Command.UpdatePlayer:
                     SetBroadMsg(role);
                     break;
+                case Command.TeamUpdate:
+                    HandleTeamUpdate(role);
+                    break;
             }
             marsPeer.SendClientResponse(bundle);
 
@@ -103,6 +106,12 @@ namespace MarsServer
                 bundle.cmd = Command.UpdatePlayer;
                 MarsPeer.BroadCastEvent(peers, bundle);
             }
+        }
+
+        void HandleTeamUpdate(Role role)
+        {
+            bundle.role = role;
+            RoomInstance.instance.BroadcastEvent(marsPeer, bundle, Room.BroadcastType.Region);
         }
 
     }
