@@ -233,12 +233,6 @@ namespace MarsServer
         {
             Message message = JsonConvert.DeserializeObject<Message>(json);
             messageOperator.EnqueueOperator(cmd, message);
-            /*Bundle bundle = new Bundle();
-            //boastcast message
-            bundle.cmd = Command.SendChat;
-            bundle.message = message;
-            MessageOperator.instance.OnOperationRequest(bundle, this);*/
-
         }
         #endregion
 
