@@ -114,10 +114,10 @@ namespace MarsServer
                     HandleServerSelectOnOperation(json, cmd);
                     break;
                 case Command.CreatRole:
-                    bundle = HandleCreatRoleOnOperation(json, cmd);
+                    HandleCreatRoleOnOperation(json, cmd);
                     break;
                 case Command.EnterGame:
-                    bundle = HandleEnterGameOnOperation(json, cmd);
+                    HandleEnterGameOnOperation(json, cmd);
                     break;
                 case Command.UpdatePlayer:
                     HandleUpdatePlayerOnOperation(json, cmd);
@@ -192,85 +192,28 @@ namespace MarsServer
             //bundle.cmd = cmd;
             region = Constants.SelectRole;
             accountId = server.accountId;
-            serverOperator.EnqueueOperator(accountId, cmd);
+            serverOperator.EnqueueOperator(cmd, accountId);
         }
         #endregion
 
         #region HandleCreatRoleOnOperation
-        Bundle HandleCreatRoleOnOperation(string json, Command cmd)
+        void HandleCreatRoleOnOperation(string json, Command cmd)
         {
             Role role = JsonConvert.DeserializeObject<Role>(json);
             Bundle bundle = new Bundle();
             bundle.cmd = cmd;
             role.accountId = accountId;
-            roleOperator.EnqueueOperator(bundle);
-
-            /*string msg = RoleMySQL.instance.CreatRole(role);
-            long id = 0;
-            bool isSuccess = long.TryParse(msg, out id);
-            if (isSuccess)
-            {
-                role.roleId = id;
-                bundle.role = role;
-            }
-            else
-            {
-                bundle.error = new Error();
-                bundle.error.message = NetError.ROLR_CREAT_ERROR;
-            }*/
-
-            return bundle;
+            roleOperator.EnqueueOperator(cmd, role);
         }
         #endregion
 
         #region HandleEnterGameOnOperation
-        Bundle HandleEnterGameOnOperation(string json, Command cmd)
+        void HandleEnterGameOnOperation(string json, Command cmd)
         {
             Role role = JsonConvert.DeserializeObject<Role>(json);
-            Bundle bundle = new Bundle();
-
-            //Self's role
             roleId = role.roleId;
-            Role newRole = new Role();//this.Role;//RoleMySQL.instance.getRoleByRoleId(roleId);
-            if (newRole != null)
-            {
-                newRole.accountId = this.Role.accountId;
-                newRole.roleId = this.Role.roleId;
-                newRole.roleName = this.Role.roleName;
-                newRole.sex = this.Role.sex;
-                newRole.exp = this.Role.exp;
-                newRole.profession = this.Role.profession;
-                newRole.level = this.Role.level;
-
-                PropertyValue pv = Property.instance.GetValueByK(newRole.profession);
-                newRole.strength = pv.strength;
-                newRole.stamina = pv.stamina;
-                newRole.wit = pv.wit;
-                newRole.agility = pv.agility;
-                newRole.critical = pv.critical;
-                
-               
-
-                region = Constants.PUBLICZONE;
-                bundle.onlineRoles = Actor.Instance.HandleRoleListOnlineBySamePos (this);
-                bundle.role = newRole;
-            }
-            //get all online peers, in public region
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);
-            //new Role
-            if (peers.Count >= 0)
-            {
-                Role mRole = new Role();
-                mRole.roleId = newRole.roleId;
-                mRole.roleName = newRole.roleName;
-                mRole.profession = newRole.profession;
-                Bundle mBundle = new Bundle();
-                mBundle.cmd = Command.AddNewPlayer;                   
-                mBundle.role = mRole;
-                BroadCastEvent(peers, mBundle);
-            }
-
-            return bundle;
+            region = Constants.PUBLICZONE;
+            roleOperator.EnqueueOperator(cmd, role);
         }
         #endregion
 
@@ -279,19 +222,18 @@ namespace MarsServer
         {
             Role mRole = JsonConvert.DeserializeObject<Role>(json);
             UpdateRoleState(mRole);
-            
-            //get all online peers, in public region
-            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);/*.HandleAccountListOnline((MarsPeer peer) =>
-            {
-                return peer.accountId == accountId || peer.region != region;//account is self, or not in same pos, don't add list Peer
-            });*/
+
+            roleOperator.EnqueueOperator(cmd, mRole);
+
+            /*//get all online peers, in public region
+            List<MarsPeer> peers = Actor.Instance.HandleAccountListOnlineBySamePos(this);
             if (peers.Count >= 0)
             {
                 Bundle bundle = new Bundle();
                 bundle.role = mRole;
                 bundle.cmd = Command.UpdatePlayer;
                 BroadCastEvent(peers, bundle);
-            }
+            }*/
         }
         #endregion
 

@@ -12,12 +12,11 @@ namespace MarsServer
         {
         }
 
-        public override void ExecuteOperation(params object[] objs)
+        public override void ExecuteOperation(Command cmd, params object[] objs)
         {
+            base.ExecuteOperation(cmd, objs);
+
             long accountId = (long)objs[0];
-            Command cmd = (Command)objs[1];
-            Bundle bundle = new Bundle();
-            bundle.cmd = cmd;
             bool isLogined = Actor.Instance.HandleAccountLogin(accountId, marsPeer);
             if (isLogined == false)
             {

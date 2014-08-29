@@ -12,6 +12,9 @@ namespace MarsServer
         public PoolFiber poolFiber {private set; get;}
 
         protected MarsPeer marsPeer;
+
+        protected Bundle bundle;
+
         public Game(MarsPeer peer)
         {
             this.marsPeer = peer;
@@ -19,14 +22,15 @@ namespace MarsServer
             this.poolFiber.Start();
         }
 
-        public void EnqueueOperator(params object[] objs)
+        public void EnqueueOperator(Command cmd, params object[] objs)
         {
-            poolFiber.Enqueue(() => ExecuteOperation(objs));
+            poolFiber.Enqueue(() => ExecuteOperation(cmd, objs));
         }
 
-        public virtual void ExecuteOperation(params object[] objs)
+        public virtual void ExecuteOperation(Command cmd, params object[] objs)
         {
- 
+            bundle = new Bundle();
+            bundle.cmd = cmd;
         }
 
         public void Dispose()
