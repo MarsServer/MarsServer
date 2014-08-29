@@ -13,7 +13,10 @@ namespace MarsServer
     {
         #region property
 
-        private readonly IFiber fiber;
+        #region Queue Operator
+        private ServerOperator serverOperator;
+        private RoleOperator roleOperator;
+        #endregion
 
         public long accountId { get; private set; }
         public long roleId { get; private set; }
@@ -57,8 +60,8 @@ namespace MarsServer
         public MarsPeer(IRpcProtocol rpc, IPhotonPeer peer)
             : base(rpc, peer)
         {
-            this.fiber = new PoolFiber();
-            this.fiber.Start();
+            serverOperator = new ServerOperator(this);
+            roleOperator = new RoleOperator(this);
 
             HandshakeHandle();
         }
@@ -67,7 +70,7 @@ namespace MarsServer
          {
              Bundle bundle = new Bundle();
              bundle.cmd = Command.LinkServer;
-             SendClientEvent(bundle);
+             SendClientResponse(bundle);
          }
 
          private void ClearData()//Switch role clear data
@@ -108,7 +111,7 @@ namespace MarsServer
             switch (cmd)
             {
                 case Command.ServerSelect:
-                    bundle = HandleServerSelectOnOperation(json, cmd);
+                    HandleServerSelectOnOperation(json, cmd);
                     break;
                 case Command.CreatRole:
                     bundle = HandleCreatRoleOnOperation(json, cmd);
@@ -142,11 +145,11 @@ namespace MarsServer
                     break;
             }
 
-            if (bundle != null)
+            /*if (bundle != null)
             {
                 bundle.cmd = cmd;
                 SendClientEvent(bundle);
-            }
+            }*/
         }
         #endregion
 
@@ -182,26 +185,14 @@ namespace MarsServer
         #endregion
 
         #region HandleServerSelectOnOperation
-        Bundle HandleServerSelectOnOperation(string json, Command cmd)
+        void HandleServerSelectOnOperation(string json, Command cmd)
         {
             Server server = JsonConvert.DeserializeObject<Server>(json);
-            Bundle bundle = new Bundle();
-
+            //Bundle bundle = new Bundle();
+            //bundle.cmd = cmd;
             region = Constants.SelectRole;
-
             accountId = server.accountId;
-
-            bool isLogined = Actor.Instance.HandleAccountLogin(accountId, this);
-            if (isLogined == false)
-            {
-                bundle.error = new Error();
-                bundle.error.message = NetError.SAME_ACCOUNT_DISCOUNT_ERROR;
-            }
-            else
-            {
-                bundle.roles = RoleMySQL.instance.GetDataListByAccountId(accountId);
-            }
-            return bundle;
+            serverOperator.EnqueueOperator(accountId, cmd);
         }
         #endregion
 
@@ -210,10 +201,11 @@ namespace MarsServer
         {
             Role role = JsonConvert.DeserializeObject<Role>(json);
             Bundle bundle = new Bundle();
-
+            bundle.cmd = cmd;
             role.accountId = accountId;
+            roleOperator.EnqueueOperator(bundle);
 
-            string msg = RoleMySQL.instance.CreatRole(role);
+            /*string msg = RoleMySQL.instance.CreatRole(role);
             long id = 0;
             bool isSuccess = long.TryParse(msg, out id);
             if (isSuccess)
@@ -225,7 +217,7 @@ namespace MarsServer
             {
                 bundle.error = new Error();
                 bundle.error.message = NetError.ROLR_CREAT_ERROR;
-            }
+            }*/
 
             return bundle;
         }
@@ -510,11 +502,11 @@ namespace MarsServer
         #endregion
 
         #region Link Client Event
-        public void SendClientEvent(Bundle bundle)
+        public void SendClientResponse(Bundle bundle)
         {
             OperationResponse response = new OperationResponse((byte)bundle.cmd, GetParameter (bundle)) { ReturnCode = 1, DebugMessage = "" };
-            //SendOperationResponse(response, new SendParameters());
-            this.fiber.Enqueue(()=>SendOperationResponse (response, new SendParameters()));
+            SendOperationResponse(response, new SendParameters());
+            //this.fiber.Enqueue(()=>SendOperationResponse (response, new SendParameters()));
         }
 
 

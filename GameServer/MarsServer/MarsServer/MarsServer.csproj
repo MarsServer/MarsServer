@@ -84,9 +84,11 @@
     <Compile Include="Fight\FightCache.cs" />
     <Compile Include="Fight\FightCollection.cs" />
     <Compile Include="Fight\FightInstance.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="MarsPeer.cs" />
     <Compile Include="Message\MessageManager.cs" />
     <Compile Include="MySQL\MySql_Operator\LvInfoSQL.cs" />
+    <Compile Include="Operator\Role\RoleOperator.cs" />
     <Compile Include="PlayersOld\Fight\FightConstants.cs" />
     <Compile Include="PlayersOld\Fight\FightManager.cs" />
     <Compile Include="Json\JsonConvert.cs" />
@@ -104,7 +106,9 @@
     <Compile Include="Room\Room.cs" />
     <Compile Include="Room\RoomCollection.cs" />
     <Compile Include="Room\RoomInstance.cs" />
+    <Compile Include="Operator\Server\ServerOperator.cs" />
     <Compile Include="StringEncrypt\CSharpEncrypt.cs" />
+    <Compile Include="Tool\Tool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="log4net.config">
