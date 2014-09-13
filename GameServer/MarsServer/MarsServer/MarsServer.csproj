@@ -71,6 +71,8 @@
     <Compile Include="Data\Error.cs" />
     <Compile Include="Data\Fight.cs" />
     <Compile Include="Data\FightRegion.cs" />
+    <Compile Include="Data\GameBase.cs" />
+    <Compile Include="Data\GameItem.cs" />
     <Compile Include="Data\GameMonster.cs" />
     <Compile Include="Data\GameReward.cs" />
     <Compile Include="Data\Item.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="Fight\FightInstance.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="MarsPeer.cs" />
+    <Compile Include="MySQL\MySql_Operator\GameItemSQL.cs" />
     <Compile Include="Operator\Fight\FightOperator.cs" />
     <Compile Include="Operator\Message\MessageOperator.cs" />
     <Compile Include="MySQL\MySql_Operator\LvInfoSQL.cs" />
