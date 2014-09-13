@@ -61,6 +61,10 @@ namespace MarsServer
             if (g_gm != null)
             {
                 gameMonster.hp = g_gm.hp;
+                if (g_gm.gameReward != null)
+                {
+                    gameMonster.gameReward = g_gm.gameReward;
+                }
             }
             bundle.gameMonster = gameMonster;
 

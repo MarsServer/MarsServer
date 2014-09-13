@@ -72,6 +72,8 @@
     <Compile Include="Data\Fight.cs" />
     <Compile Include="Data\FightRegion.cs" />
     <Compile Include="Data\GameMonster.cs" />
+    <Compile Include="Data\GameReward.cs" />
+    <Compile Include="Data\Item.cs" />
     <Compile Include="Data\Message.cs" />
     <Compile Include="Data\NetError.cs" />
     <Compile Include="Data\NetSuccess.cs" />

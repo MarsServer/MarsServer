@@ -40,6 +40,16 @@ public class FightCache
         {
             gameMonster.hp -= gm.deductHp;
             gameMonster.hp = Math.Max(gameMonster.hp, 0);
+
+            if (gameMonster.hp <= 0)
+            {
+                //TODO: when monster die give some reward...
+                gameMonster.gameReward = new GameReward();
+                gameMonster.gameReward.exp = 100;
+                gameMonster.gameReward.item = new Item();
+                gameMonster.gameReward.item.id = "100001";
+                gameMonster.gameReward.item.num = 10;
+            }
         }
         return gameMonster;
     }

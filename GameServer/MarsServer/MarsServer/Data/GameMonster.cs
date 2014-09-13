@@ -59,4 +59,7 @@ public class GameMonster
     public float target_y;
     [DefaultValue(0F)]
     public float target_z;
+
+    [DefaultValue(null)]
+    public GameReward gameReward;
 }

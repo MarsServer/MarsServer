@@ -9,7 +9,7 @@ namespace MarsServer
 {
     public class Game : IDisposable
     {
-        public PoolFiber poolFiber {private set; get;}
+        public static PoolFiber poolFiber {private set; get;}
 
         protected MarsPeer marsPeer;
 
@@ -18,8 +18,14 @@ namespace MarsServer
         public Game(MarsPeer peer)
         {
             this.marsPeer = peer;
-            this.poolFiber = new PoolFiber();
-            this.poolFiber.Start();
+
+            if (poolFiber == null)
+            {
+                poolFiber = new PoolFiber();
+                poolFiber.Start();
+            }
+            /*this.poolFiber = new PoolFiber();
+            this.poolFiber.Start();*/
         }
 
         public void EnqueueOperator(Command cmd, params object[] objs)
