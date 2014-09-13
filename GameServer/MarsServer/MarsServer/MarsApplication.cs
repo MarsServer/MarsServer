@@ -31,6 +31,9 @@ namespace MarsServer
 
             LvInfoSQL.instance.Init();
             Debug.Log("LvInfoSQL is Ok...............................................");
+
+            GameItemSQL.instance.Init();
+            Debug.Log("GameItemSQL is Ok...............................................");
         }
 
         protected override void TearDown()

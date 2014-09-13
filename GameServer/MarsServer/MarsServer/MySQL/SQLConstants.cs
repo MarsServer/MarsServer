@@ -33,5 +33,7 @@ namespace MarsServer
         public const string MySQL_EXP_LIST = "select * from exp";
         /*LV_INFO*/
         public const string MySQL_LV_INF_LIST = "select * from LV_INFO";
+        /*GameItem*/
+        public const string MySQL_GAME_ITEM_LIST = "select * from GameItem";
     }
 }
