@@ -9,57 +9,57 @@ using System.ComponentModel;
 public class GameMonster
 {
     [DefaultValue(null)]
-    public string id;
+    public string id{ get; set; }
     [DefaultValue(null)]
-    public string type;
+    public string type{ get; set; }
     [DefaultValue(null)]
-    public string name;
+    public string name { get; set; }
     [DefaultValue(null)]
-    public string desc;
+    public string desc { get; set; }
     [DefaultValue(null)]
-    public string icon;
+    public string icon { get; set; }
     [DefaultValue(null)]
-    public string model;
+    public string model { get; set; }
     [DefaultValue(0)]
-    public int value;
+    public int value { get; set; }
     [DefaultValue(0)]
-    public int gold;
+    public int gold { get; set; }
     [DefaultValue(0)]
-    public int gem;
+    public int gem { get; set; }
     [DefaultValue(0)]
-    public int level;
+    public int level { get; set; }
     [DefaultValue(0F)]
-    public float hp;
+    public float hp { get; set; }
     [DefaultValue(0F)]
-    public float hpMax;
+    public float hpMax { get; set; }
     [DefaultValue(0F)]
-    public float deductHp;
+    public float deductHp { get; set; }
     [DefaultValue(0L)]
-    public long attId;
+    public long attId { get; set; }
 
     [DefaultValue(0F)]
-    public float x;
+    public float x { get; set; }
     [DefaultValue(0F)]
-    public float z;
+    public float z { get; set; }
     [DefaultValue(0F)]
-    public float xRo;
+    public float xRo { get; set; }
     [DefaultValue(0F)]
-    public float zRo;
+    public float zRo { get; set; }
     [DefaultValue(0F)]
-    public float action;
+    public float action { get; set; }
     [DefaultValue(false)]
-    public bool isBoss;
+    public bool isBoss { get; set; }
 
     [DefaultValue(0)]
-    public int state;
+    public int state { get; set; }
 
     [DefaultValue(0F)]
-    public float target_x;
+    public float target_x { get; set; }
     [DefaultValue(0F)]
-    public float target_y;
+    public float target_y { get; set; }
     [DefaultValue(0F)]
-    public float target_z;
+    public float target_z { get; set; }
 
     [DefaultValue(null)]
-    public GameReward gameReward;
+    public GameReward gameReward { get; set; }
 }

@@ -9,7 +9,7 @@ namespace MarsServer
 {
     public abstract class SQLCommon<K, T>
     {
-        protected Dictionary<K, T> datas = new Dictionary<K, T>();
+        protected readonly Dictionary<K, T> datas = new Dictionary<K, T>();
         public void Init ()
         {
             StringBuilder sb_sql = new StringBuilder();
@@ -23,10 +23,6 @@ namespace MarsServer
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 RefreshData(dt.Rows[i]);
-                /*int level = int.Parse(dt.Rows[i][0].ToString());
-                int expMax = int.Parse(dt.Rows[i][1].ToString());
-                //Debug.Log(level + "___________" + expMax);
-                exps.Add(level, expMax);*/
             }
         }
 

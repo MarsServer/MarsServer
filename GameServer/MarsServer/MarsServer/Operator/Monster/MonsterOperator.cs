@@ -41,7 +41,13 @@ namespace MarsServer
             if (lvInfo != null)
             {
                 //Fight g_Fight = JsonConvert.DeserializeObject<Fight>(lvInfo.scInfoJson);
-                bundle.gameMonsters = lvInfo.fight.gameMonsters[fr.index];
+                GameMonster[] gameMonsters = lvInfo.fight.gameMonsters[fr.index];
+                bundle.gameMonsters = new GameMonster[gameMonsters.Length];
+                for (int i = 0; i < gameMonsters.Length; i++)
+                {
+                    bundle.gameMonsters[i] = new GameMonster();
+                    Tool.Copy(bundle.gameMonsters[i], gameMonsters[i]);
+                }
             }
 
             Dictionary<string, GameMonster> gmDict = new Dictionary<string, GameMonster>();

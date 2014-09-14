@@ -29,6 +29,11 @@ public class FightCache
     public void Remove(string id)//when monster boss.....
     {
         gameMonsters.Remove(id);
+
+        /*if (gameMonsters.Count == 0)
+        {
+            FightInstance.instance.Remove(this);
+        }*/
     }
 
     public GameMonster UpdateHp(GameMonster gm)
@@ -49,6 +54,9 @@ public class FightCache
                 gameMonster.gameReward.item = new Item();
                 gameMonster.gameReward.item.id = "100001";
                 gameMonster.gameReward.item.num = 10;
+
+                //remove this monster;
+               // Remove(gm.id);
             }
         }
         return gameMonster;
