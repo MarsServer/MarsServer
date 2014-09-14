@@ -134,7 +134,7 @@ namespace MarsServer
              role.roleId = maxRoleId;
              StringBuilder insert_sql = new StringBuilder();
              insert_sql.Append(SQLConstants.MySQL_INSERTINTO_ROLE);
-             insert_sql.AppendFormat(SQLConstants.MySQL_INSERTINTO_ROLE_VALUE, r.roleId, r.accountId, r.roleName, r.sex, 1, r.profession, "1", DateTime.Now.ToString());
+             insert_sql.AppendFormat(SQLConstants.MySQL_INSERTINTO_ROLE_VALUE, r.roleId, r.accountId, r.roleName, r.sex, 0, r.profession, "1", DateTime.Now.ToString());
              DBUtility.RunSQL(insert_sql.ToString());
              
              AddRole(role);
@@ -165,5 +165,31 @@ namespace MarsServer
              allRolesByRoId.TryGetValue(roleId, out role);
              return role;
          }
+
+ #region Add date in sql about sql
+         public void AddExp(long roleId, int addVal)
+         {
+             if (addVal <= 0) return;
+
+             Role role = getRoleByRoleId(roleId);
+             if (role != null)
+             {
+                 role.exp += addVal;
+             }
+             int level = role.level;
+
+             ExpMySQL.instance.CheckUpgrade(role);
+
+            // Debug.Log(level + "___" + role.level);
+             if (level != role.level)
+             {
+                 SQLConstants.RunSqlStatement(SQLConstants.MySQL_CHECK_ACCOUNT_ID_LEVEL, role.level, role.exp, role.roleId);
+             }
+             else
+             {
+                 SQLConstants.RunSqlStatement(SQLConstants.MySQL_CHECK_ACCOUNT_ID_EXP, role.exp, role.roleId);
+             }
+         }
+#endregion
     }
 }

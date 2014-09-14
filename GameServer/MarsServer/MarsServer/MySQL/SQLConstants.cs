@@ -27,6 +27,9 @@ namespace MarsServer
         public const string MySQL_CHECK_ROLE_NAME = "select * from role where rolename='{0}'";
         public const string MySQL_CHECK_ACCOUNT_ID_ROLE = "select * from role where accountid='{0}'";
 
+        public const string MySQL_CHECK_ACCOUNT_ID_EXP = "update role set exp = {0} where roleid = {1}";
+        public const string MySQL_CHECK_ACCOUNT_ID_LEVEL = "update role set level = {0}, exp = {1} where roleid = {2}";
+
         /*property*/
         public const string MySQL_PROPERTY_LIST = "select * from property";
         /*exp*/
@@ -35,5 +38,13 @@ namespace MarsServer
         public const string MySQL_LV_INF_LIST = "select * from LV_INFO";
         /*GameItem*/
         public const string MySQL_GAME_ITEM_LIST = "select * from GameItem";
+
+
+        public static void RunSqlStatement (string constStr,  params object[] objs)
+        {
+            StringBuilder update_Sql = new StringBuilder();
+            update_Sql.AppendFormat(constStr, objs);
+            DBUtility.RunSQLReturnDataTable(update_Sql.ToString());
+        }
     }
 }

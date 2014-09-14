@@ -68,6 +68,7 @@ namespace MarsServer
                 newRole.exp = marsPeer.Role.exp;
                 newRole.profession = marsPeer.Role.profession;
                 newRole.level = marsPeer.Role.level;
+                newRole.expMax = ExpMySQL.instance.GetNextExp(marsPeer.Role.level + 1);
 
                 PropertyValue pv = Property.instance.GetValueByK(newRole.profession);
                 newRole.strength = pv.strength;

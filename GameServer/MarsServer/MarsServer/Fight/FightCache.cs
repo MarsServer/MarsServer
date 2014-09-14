@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarsServer;
 public class FightCache
 {
     public string id;
@@ -36,7 +37,7 @@ public class FightCache
         }*/
     }
 
-    public GameMonster UpdateHp(GameMonster gm)
+    public GameMonster UpdateHp(GameMonster gm, MarsPeer peer)
     {
         GameMonster gameMonster = null;
         this.gameMonsters.TryGetValue(gm.id, out gameMonster);
@@ -55,8 +56,7 @@ public class FightCache
                 gameMonster.gameReward.item.id = "100001";
                 gameMonster.gameReward.item.num = 10;
 
-                //remove this monster;
-               // Remove(gm.id);
+                RoleMySQL.instance.AddExp(peer.roleId, gameMonster.gameReward.exp);
             }
         }
         return gameMonster;

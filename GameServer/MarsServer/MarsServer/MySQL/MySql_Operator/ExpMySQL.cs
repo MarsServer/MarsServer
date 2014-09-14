@@ -11,32 +11,17 @@ namespace MarsServer
     {
         public readonly static ExpMySQL instance = new ExpMySQL();
 
-        //private Dictionary<int, int> exps = new Dictionary<int, int>();
+        private int MaxLevel = 0;
 
-        /*public void Init()
-        {
-            StringBuilder sb_sql = new StringBuilder();
-            DataTable dt = null;
-            sb_sql.AppendFormat(SQLConstants.MySQL_EXP_LIST);
-            dt = DBUtility.RunSQLReturnDataTable(sb_sql.ToString());
-            if (dt.Rows.Count == 0)
-            {
-                return;
-            }
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                
-                int level = int.Parse(dt.Rows[i][0].ToString());
-                int expMax = int.Parse(dt.Rows[i][1].ToString());
-                //Debug.Log(level + "___________" + expMax);
-                exps.Add(level, expMax);
-            }
-        }*/
         public override void RefreshData(DataRow row)
         {
             int level = int.Parse(row[0].ToString());
             int expMax = int.Parse(row[1].ToString());
-            //Debug.Log(level + "___________" + expMax);
+
+            if (level > MaxLevel)
+            {
+                MaxLevel = level;
+            }
             datas.Add(level, expMax);
         }
 
@@ -45,11 +30,40 @@ namespace MarsServer
             return SQLConstants.MySQL_EXP_LIST;
         }
 
-        /*public int GetMaxExp(int level)
+        public int GetNextExp(int nextLevel)
         {
-            int maxExp = 0;
-            exps.TryGetValue(level, out maxExp);
-            return maxExp;
-        }*/
+            if (nextLevel < MaxLevel)
+            {
+                return GetValueByK(nextLevel);
+            }
+            return 0;
+        }
+
+        public void CheckUpgrade(Role role)
+        {
+            int nextLevel = role.level + 1;
+            if (nextLevel <= MaxLevel)
+            {
+                int expMax = GetNextExp(nextLevel);
+                if (role.exp >= expMax)
+                {
+                    int val = role.exp - expMax;
+                    role.level = nextLevel;
+                    int nextLeve0 = nextLevel + 1;
+                    if (nextLeve0 < MaxLevel)
+                    {
+                        if (val >= 0)
+                        {
+                            role.exp = val;
+                            CheckUpgrade(role);
+                        }
+                    }
+                    else
+                    {
+                        role.exp = 0;
+                    }
+                }
+            }
+        }
     }
 }

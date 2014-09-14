@@ -63,7 +63,7 @@ namespace MarsServer
         {
             GameMonster gameMonster = new GameMonster();
             gameMonster.id = gm.id;
-            GameMonster g_gm = marsPeer.fightCache.UpdateHp(gm);
+            GameMonster g_gm = marsPeer.fightCache.UpdateHp(gm, marsPeer);
             if (g_gm != null)
             {
                 gameMonster.hp = g_gm.hp;
